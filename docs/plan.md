@@ -55,7 +55,7 @@ repo never edits openledger-v2.
 | Piece | Choice | Why |
 |---|---|---|
 | Framework | Next.js 16, React 19, TypeScript | The old app's versions |
-| Package manager and test runner | bun (`bun test`) | Decided |
+| Package manager, scripts and test runner | Bun: `bun install`, `bun run`, `bun test`, `bunx`; never npm, yarn, pnpm or npx; lockfile `bun.lock` | Decided |
 | Styling | Tailwind CSS 3.4, CSS variables for tokens | The old app's version, so its tokens and overrides carry over as they are |
 | Icons | lucide-react | The old app's |
 | Themes | next-themes, `class` attribute | The old app's mechanism |

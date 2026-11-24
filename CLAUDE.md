@@ -40,6 +40,12 @@ decisions behind it are in openledger-v2's
 - **The GraphQL client is generated** from the two schema files; plain
   `fetch`, no Apollo or urql.
 
+## Tooling
+
+- **Bun** is the package manager, script runner and test runner: `bun
+  install`, `bun add`, `bun run <script>`, `bun test`, `bunx` for one-off
+  tools. Never npm, yarn, pnpm or npx; the lockfile is `bun.lock`.
+
 ## How to work
 
 - Before building an area, write `docs/parity/<area>.md`: everything the
