@@ -1,0 +1,209 @@
+# Plan: the OpenLedger web UI on gl-node
+
+Status: draft, 2026-11-24, for the maintainer's review before any code.
+
+The decisions behind this app are in openledger-v2's
+`docs/build-log/011-web-ui-on-gl-node/` (intent.md decisions 4, 7, 10, 11, 12
+and 13 above all). This file is this repo's own plan: how the app is built,
+in what order, and what it waits for.
+
+## What it is
+
+A new web app, written from scratch, with the old app's features and its
+UI/UX unchanged, so that someone who used the old app would not notice the
+backend changed. The old app (`.do_not_commit_ignore/newgl-ui`, read-only)
+is the reference for every screen: its layout, copy, colours, themes, font
+stack, icons and name (*New GL*). The backend is gl-node's GraphQL API; this
+repo never edits openledger-v2.
+
+## Architecture
+
+- **Next.js static export** (`output: "export"`), no server routes, no
+  middleware; deployed on Vercel later. Every page is a client page.
+- **The browser calls gl-node directly:** `https://<node>/ledgers/<name>/graphql`
+  for a company's books, `https://<node>/node/graphql` with the operator key
+  only to create a company. Each request sends `X-Api-Key`.
+- **A typed client generated from the two schema files.** graphql-codegen
+  reads `docs/api/schema.graphql` and `docs/api/node-schema.graphql` from
+  openledger-v2 (path set in one place, `codegen.ts`) and our `.graphql`
+  operation files, and writes typed document nodes. One small `fetch`
+  wrapper sends them. No Apollo, no urql.
+- **Companies live in `sessionStorage`:** each one is a node URL, a ledger
+  name, a key and a display label. The picker switches between them.
+  Switching is a hard boundary: the page reloads, so nothing fetched for the
+  previous company survives. The operator key is used for one create and
+  never stored.
+- **Sign-in is pasting a key.** The sign-in screen sits behind one interface
+  (`signIn(company) → session`), so entry 013's email and password can
+  replace the form without touching the screens behind it.
+- **Nothing on screen is a stub.** A screen, button, column or menu item
+  appears only once gl-node has the query behind it. Where the old app shows
+  a placeholder (a disabled button, a "isn't available yet" toast), we leave
+  it out too. Areas that aren't backed stay out of the navigation.
+- **Money is exact.** gl-node sends amounts as decimal strings. They are
+  never turned into JavaScript numbers. Sums the screen makes itself (parent
+  account rollups, section subtotals) use a decimal library, and formatting
+  works on the string.
+- **Accounts get their categories later.** The old screens group accounts by
+  13 QuickBooks-style categories. gl-node will carry them as account
+  metadata (011 unit 3). Until then, an account's section comes from its
+  Beancount root (`Assets`, `Liabilities`, `Equity`, `Income`, `Expenses`),
+  and anything that needs the finer category waits.
+
+## Stack
+
+| Piece | Choice | Why |
+|---|---|---|
+| Framework | Next.js 16, React 19, TypeScript | The old app's versions |
+| Package manager and test runner | bun (`bun test`) | Decided |
+| Styling | Tailwind CSS 3.4, CSS variables for tokens | The old app's version, so its tokens and overrides carry over as they are |
+| Icons | lucide-react | The old app's |
+| Themes | next-themes, `class` attribute | The old app's mechanism |
+| GraphQL | `@graphql-codegen/cli` with `typescript`, `typescript-operations` and `typed-document-node` | Typed operations over plain `fetch` |
+| Decimals | `big.js` | Small and exact; enough for adding and comparing amounts |
+| End-to-end tests | Playwright | Decided |
+| Lint | ESLint with Next's config, plus `id-length` (minimum 2) and `no-restricted-imports` (no `./` or `../`) | The code-style rules |
+
+## Layout of the repo
+
+```
+src/app/                    routes (static export)
+src/components/ui/          buttons, inputs, selects, modals, tables, toasts
+src/components/layout/      app shell, side rail, top header, flyouts, page header
+src/components/<area>/      each area's screens
+src/graphql/ledger/         operations against a ledger's endpoint (.graphql)
+src/graphql/node/           operations against the node endpoint (.graphql)
+src/graphql/generated/      codegen output (generated, not edited by hand)
+src/lib/companies/          the company list, the active company, switching
+src/lib/gl-node/            the fetch wrapper and error handling
+src/lib/money/              decimal sums and formatting
+src/styles/                 tokens and the five themes
+tests/e2e/                  Playwright flows and the gl-node harness
+docs/parity/<area>.md       what the old screen does, ticked as it is built
+docs/api-gaps.md            what the UI needs and gl-node lacks
+```
+
+Imports are absolute (`@/…`) everywhere.
+
+## Errors from gl-node
+
+One place turns gl-node's answers into what the screen shows:
+
+- **HTTP 401** (unknown key, or a ledger name the node does not serve):
+  the company's key is refused. The app goes to the sign-in screen for that
+  company, with its node and ledger filled in.
+- **A GraphQL error coded `FORBIDDEN`:** the key's role is too low. The
+  action shows the old app's error toast with a plain message.
+- **Network failure** (node down, CORS refused, a plain-HTTP node from an
+  HTTPS page): "Can't reach <node>". With a hint to check the node's
+  `cors.allowedOrigins` when the browser reports a CORS failure.
+- **Other GraphQL errors:** shown with the error's message, as the old app
+  shows its API's messages.
+
+## Navigation in the first stage
+
+The rail keeps the old order and look, showing only what is backed:
+
+| Old rail item | First stage |
+|---|---|
+| Logo, Home | Logo stays. Home waits (its dashboard needs the register and entry forms); **question 2** |
+| Reports | Shown: Standard Reports with Trial Balance, Balance Sheet, Profit and Loss |
+| Accounting | Shown: Bank Transactions, Chart of Accounts |
+| Expenses, Sales, More apps | Hidden: nothing in them is backed |
+| Settings | Hidden: AI, Billing, Organization and Ledger are not backed |
+
+## Order of work
+
+Each step starts with its parity checklist and ends with its unit tests and
+Playwright flows passing against a local gl-node. I stop for review at the
+end of each step, and commit only when the maintainer says so.
+
+1. **Scaffold.** Next.js, TypeScript, Tailwind, bun, static export,
+   codegen wired to the two schema files, ESLint with the code-style rules,
+   `bun test`, Playwright with the gl-node harness. Proof: `next build`
+   exports, lint and both test runners pass on an empty app.
+2. **App shell and themes** (`docs/parity/app-shell.md`). Tokens and all
+   five themes ported from the old `src/styles/tailwind-overrides.css` and
+   `globals.css`; the UI kit (button, input, select, modal, table, toast,
+   skeleton, badge, card, checkbox); side rail, top header, flyouts, page
+   header, the All apps sub menu.
+3. **Companies and sign-in** (`docs/parity/companies.md`). Add, pick,
+   switch, create with the operator key, sign out. The first page that
+   proves the browser-to-node path: CORS, a key, one call.
+4. **Reports** (`docs/parity/reports.md`). Standard Reports index, Trial
+   Balance, Balance Sheet, Profit and Loss.
+5. **Chart of accounts, read-only** (`docs/parity/chart-of-accounts.md`).
+6. **Bank transactions** (`docs/parity/bank-transactions.md`). The inbox,
+   posting and excluding, connecting a bank through Plaid Link, mapping its
+   accounts.
+
+Then, as gl-node adds them: `me` (names and roles in the header, hiding
+what a key cannot do), account metadata (categories, codes, detail types:
+the chart's columns and the reports' finer sections), entry metadata, the
+register, the entry forms, more reports, corrections (undo and edit), and
+the store areas (customers, vendors, invoices, bills, receipts and the
+rest). Each gets its parity checklist before its code.
+
+## Testing
+
+- **`bun test`** for logic with no browser: the account tree and rollups,
+  decimal sums and formatting, report period presets and compare ranges,
+  the company store, error mapping.
+- **Playwright against a real gl-node.** A harness starts the gl-node
+  binary (`GL_NODE_BINARY`, defaulting to openledger-v2's
+  `target/release/gl-node`; this repo never builds it) on loopback with a
+  temporary data folder, `cors.allowedOrigins: ["http://localhost:3000"]`
+  and a generated operator key. Each flow creates its own company through
+  the UI or the node endpoint and seeds it with `openAccount` and
+  `appendTransaction`. Totals on screen are checked against what gl-node
+  returns for the same query.
+- **Plaid** flows run in Plaid's sandbox when the gl-node under test has
+  sandbox credentials, using `connectSandboxBank` to skip Link. Without
+  credentials those flows are skipped, and the run says so.
+- **Side by side with the old app.** Each screen is compared with the old
+  one. Where the old app cannot run (it needs its Supabase backend), the
+  comparison is against its code and the impeccable skill's screenshots of
+  ours.
+
+## Questions for the maintainer
+
+1. **Themes.** The old app defines five themes but offers only Light and
+   Dark in its menu; Modern, America 250 and Pretty are hidden on purpose
+   (`components/theme/index.tsx`). Offer all five, or port all five and
+   keep the old menu's two?
+2. **Home.** The old Home is a greeting, create actions and dashboard
+   metrics, none of it backed yet. Keep Home out and send the logo and `/`
+   to Standard Reports until it is backed?
+3. **Copy that names someone else.** The old chart of accounts has a
+   *QuickBooks balance* column, and every report's header says *John Doe*
+   (a placeholder constant, `REPORT_USER_NAME`). Keep them as they are, or
+   use *Balance* and the company's label?
+4. **Removing a company.** The old picker's trash icon deleted the company
+   on the server. Here it could mean forgetting it in this browser, or
+   `removeLedger` on the node (operator key; gl-node moves the folder aside,
+   it never deletes). Which, or both?
+5. **Fetching bank transactions.** The old screen had no bank feed. gl-node
+   fills the inbox from Plaid's webhooks when they are set up, or on
+   `fetchBankTransactions` (admin). Add an *Update* button (QuickBooks has
+   one there) that fetches every connected bank?
+
+6. **Report options that did nothing.** The old *Display columns by*
+   select defaults to *Customer*, which, like Employee, Product/Service,
+   Vendor and Days, did nothing; several *Compare to* options did nothing
+   either. Leaving them out (no stubs) means the select needs a new default
+   meaning one Total column. Label it *Total only* (QuickBooks' wording)?
+
+## Risks
+
+- **CORS and desk machines.** The app on Vercel is HTTPS; a node on a
+  desk machine over plain HTTP is refused by the browser unless it is
+  localhost. Local development is fine; real use needs an HTTPS node.
+- **Query cost.** gl-node allows a weight of 4,096 per request and a report
+  weighs 512, so at most about seven reports in one request. A columnar
+  report (one column per month, say) is split into several requests.
+- **Unknown role.** Until `me` exists, the app cannot tell a read key from
+  an admin key, so an action can be shown and then refused (`FORBIDDEN`).
+  The message must be clear; `me` fixes it.
+- **sessionStorage ends with the tab.** Keys are pasted again in every new
+  tab and after the browser closes. That is the decision for now; entry
+  013's sign-in replaces it.
