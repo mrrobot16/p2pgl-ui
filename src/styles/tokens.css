@@ -1,0 +1,166 @@
+/*
+  Design tokens: the light theme (:root) and the dark theme (.dark).
+  Names and values are the old app's, unchanged (src/styles/tailwind-overrides.css
+  there; DESIGN.md). Components read them as arbitrary Tailwind values,
+  e.g. bg-[var(--color-container-background-primary)], so a theme swap
+  never touches component code.
+*/
+:root {
+  --override-focus: #3b82f6;
+  --color-text-global: #21262a;
+  --color-text-primary: #393A3D;
+  --color-input-border-primary: #8D9096;
+  --color-icon-primary: #393A3D;
+  --font-size-input-text: 13px;
+  --font-size-component-medium: 16px;
+  --font-weight-component-bold: 600;
+  --radius-x-small: 2px;
+  --radius-x-large: 12px;
+  --color-text-disabled: #8D9096;
+  --color-text-highlight: #A0CFFF;
+  --color-action-passive-subtle-active: rgba(107, 108, 114, 0.2);
+  --color-action-passive-subtle-focus: rgba(107, 108, 114, 0);
+  --color-action-passive-subtle-hover: rgba(107, 108, 114, 0.1);
+  --color-container-background-primary: #FFFFFF;
+  --color-container-background-secondary: #ECEEF1;
+  --color-container-background-accent: #F4F5F8;
+  --color-segmented-background: #E2E9ED;
+  --color-divider-tertiary: #D4D7DC;
+  --color-container-border-secondary: #BABEC5;
+  --color-action-standard: #00892E;
+  --color-ui-primary: #2CA01C;
+  --color-ui-positive: #2CA01C;
+  --color-negative: #DC2626;
+  --color-negative-subtle-hover: rgba(220, 38, 38, 0.1);
+  --color-negative-border: rgba(220, 38, 38, 0.3);
+  /* The chart of accounts' own greens, link colour and table lines. */
+  --color-qbo-green: #003e30;
+  --color-qbo-green-hover: #002e23;
+  --color-qbo-green-text: #07362a;
+  --color-qbo-green-border: #1f4138;
+  --color-qbo-link: #09392b;
+  --color-table-divider: #dee2e1;
+  --color-table-divider-strong: #d7dee0;
+  --color-field-border: #c7cccd;
+  /* Status colours carry meaning (success, info, warning), so they keep
+     their hue in every light theme. */
+  --color-positive: #16A34A;
+  --color-positive-border: rgba(22, 163, 74, 0.3);
+  --color-info: #0284C7;
+  --color-info-border: rgba(2, 132, 199, 0.3);
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FCD34D;
+  --color-warning-text: #92400E;
+  --color-text-inverse: #FFFFFF;
+  --radius-full: 9999px;
+  --color-container-border-primary: #8D9096;
+  --color-icon-secondary: #6B6C72;
+  --color-action-standard-subtle-hover: rgba(0, 137, 46, 0.1);
+  --duration-fade-moderate: 200ms;
+  --ease-fade: cubic-bezier(0.35, 0, 0.5, 1);
+  --duration-fade-fast: 150ms;
+  --gbsg-nav-bar-icon-color: #21262a;
+  --gbsg-nav-bar-text-color: #21262a;
+  --gbsg-nav-bar-action-color-hover: #005244;
+  --gbsg-nav-bar-icon-color-inverse: #ffffff;
+  --font-weight-body-semibold: 500;
+  --radius-large: 8px;
+  --color-link-text: #0365AC;
+  --color-shadow: #8d9096;
+  --radius-container-overlay: 4px;
+  --color-sidebar-background: #f0f4f6;
+  --color-input-background: #ffffff;
+  --color-input-text: #111827;
+  --color-input-disabled-border: #e5e7eb;
+  --color-input-disabled-background: #f3f4f6;
+  --color-input-disabled-text: #9ca3af;
+  --color-button-gradient-from: #ffffff;
+  --color-button-gradient-to: #f4f5f8;
+  --color-button-border: #8d9096;
+  --color-action-bar-background: #eceef1;
+  --color-quickadd-background: #f3f5f8;
+  --color-quickadd-button-text: #8d9096;
+  --color-form-row-background: #d9e4f2;
+  --color-form-row-border: #c5d3e2;
+  --color-table-row-hover: #f3f8fe;
+  --color-table-row-secondary: #f9fafb;
+  --color-table-row-secondary-hover: #ebf0f7;
+  --color-icon-muted: #babec5;
+  --color-highlight-badge-background: #e7efea;
+  --color-highlight-badge-text: #108a00;
+  --color-link-action: #005f9e;
+  --color-avatar-background: #2ca8df;
+  --color-report-row-alt: #f8f9fb;
+  --color-report-toggle-active: #005244;
+  /* Ledger-file syntax colours. */
+  --bean-accent-1: #7c3aed;
+  --bean-accent-2: #15803d;
+  --bean-accent-3: #b45309;
+}
+
+.dark {
+  --color-positive: #4ADE80;
+  --color-positive-border: rgba(74, 222, 128, 0.3);
+  --color-info: #38BDF8;
+  --color-info-border: rgba(56, 189, 248, 0.3);
+  --color-warning-bg: rgba(69, 26, 3, 0.3);
+  --color-warning-border: #78350F;
+  --color-warning-text: #FBBF24;
+  --color-text-global: #e8eaed;
+  --color-text-primary: #f1f3f4;
+  --color-icon-primary: #e8eaed;
+  --color-icon-secondary: #9aa0a6;
+  --color-text-disabled: #80868b;
+  --color-text-highlight: #669df6;
+  --color-action-passive-subtle-active: rgba(232, 234, 237, 0.16);
+  --color-action-passive-subtle-hover: rgba(232, 234, 237, 0.08);
+  --color-container-background-primary: #1e2124;
+  --color-container-background-secondary: #2a2d31;
+  --color-container-background-accent: #25282c;
+  --color-segmented-background: #33383d;
+  --color-divider-tertiary: #3c4043;
+  --color-container-border-secondary: #5f6368;
+  --color-container-border-primary: #5f6368;
+  --color-input-border-primary: #5f6368;
+  --color-shadow: #1a1d21;
+  --color-link-text: #8ab4f8;
+  --gbsg-nav-bar-icon-color: #e8eaed;
+  --gbsg-nav-bar-text-color: #e8eaed;
+  --gbsg-nav-bar-action-color-hover: #005244;
+  --color-sidebar-background: #1a1d21;
+  --color-input-background: #2a2d31;
+  --color-input-text: #e8eaed;
+  --color-input-disabled-border: #3c4043;
+  --color-input-disabled-background: #35383d;
+  --color-input-disabled-text: #80868b;
+  --color-button-gradient-from: #3a3d42;
+  --color-button-gradient-to: #2a2d31;
+  --color-button-border: #5f6368;
+  --color-action-bar-background: #2a2d31;
+  --color-quickadd-background: #25282c;
+  --color-quickadd-button-text: #9aa0a6;
+  --color-form-row-background: #1e3a5f;
+  --color-form-row-border: #2d4a6f;
+  --color-table-row-hover: #2a3441;
+  --color-table-row-secondary: #25282c;
+  --color-table-row-secondary-hover: #2a3441;
+  --color-icon-muted: #70757a;
+  --color-negative: #F87171;
+  --color-negative-subtle-hover: rgba(248, 113, 113, 0.16);
+  --color-negative-border: rgba(248, 113, 113, 0.3);
+  --color-qbo-green: #1f7a5f;
+  --color-qbo-green-hover: #278f70;
+  --color-qbo-green-text: #7fd1b2;
+  --color-qbo-green-border: #3f8f75;
+  --color-qbo-link: #7fd1b2;
+  --color-table-divider: #3c4043;
+  --color-table-divider-strong: #4a4e52;
+  --color-field-border: #5f6368;
+  --color-highlight-badge-background: #1a3d1a;
+  --color-highlight-badge-text: #5cdb5c;
+  --color-link-action: #8ab4f8;
+  --color-report-row-alt: #2a2d31;
+  --bean-accent-1: #c678dd;
+  --bean-accent-2: #98c379;
+  --bean-accent-3: #e5c07b;
+}

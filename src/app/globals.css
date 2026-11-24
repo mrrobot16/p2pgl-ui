@@ -2,13 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* The old app's font stack, unchanged (DESIGN.md, The No-Inter Rule). The
-   design tokens and the five themes arrive in step 2
-   (docs/parity/app-shell.md). */
+/* The old app's font stack, unchanged (DESIGN.md, The No-Inter Rule). */
 :root {
   --app-font-family: "Avenir Next forINTUIT", "Avenir Next", Avenir, Helvetica, Arial, sans-serif;
 }
 
 body {
+  background: var(--color-container-background-accent);
+  color: var(--color-text-global);
   font-family: var(--app-font-family);
 }

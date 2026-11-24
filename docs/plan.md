@@ -79,7 +79,7 @@ src/graphql/generated/      codegen output (generated, not edited by hand)
 src/lib/companies/          the company list, the active company, switching
 src/lib/gl-node/            the fetch wrapper and error handling
 src/lib/money/              decimal sums and formatting
-src/styles/                 tokens and the five themes
+src/styles/                 tokens (light and dark) and shell rules
 tests/e2e/                  Playwright flows and the gl-node harness
 docs/parity/<area>.md       what the old screen does, ticked as it is built
 docs/api-gaps.md            what the UI needs and gl-node lacks
@@ -108,7 +108,7 @@ The rail keeps the old order and look, showing only what is backed:
 
 | Old rail item | First stage |
 |---|---|
-| Logo, Home | Logo stays. Home waits (its dashboard needs the register and entry forms); **question 2** |
+| Logo, Home | Logo stays and opens Bank Transactions, as `/` does. Home is hidden until its dashboard is backed (register, entry forms), then comes back (question 2) |
 | Reports | Shown: Standard Reports with Trial Balance, Balance Sheet, Profit and Loss |
 | Accounting | Shown: Bank Transactions, Chart of Accounts |
 | Expenses, Sales, More apps | Hidden: nothing in them is backed |
@@ -124,9 +124,9 @@ end of each step, and commit only when the maintainer says so.
    codegen wired to the two schema files, ESLint with the code-style rules,
    `bun test`, Playwright with the gl-node harness. Proof: `next build`
    exports, lint and both test runners pass on an empty app.
-2. **App shell and themes** (`docs/parity/app-shell.md`). Tokens and all
-   five themes ported from the old `src/styles/tailwind-overrides.css` and
-   `globals.css`; the UI kit (button, input, select, modal, table, toast,
+2. **App shell and themes** (`docs/parity/app-shell.md`). Tokens and the
+   light and dark themes ported from the old
+   `src/styles/tailwind-overrides.css` and `globals.css`; the UI kit (button, input, select, modal, table, toast,
    skeleton, badge, card, checkbox); side rail, top header, flyouts, page
    header, the All apps sub menu.
 3. **Companies and sign-in** (`docs/parity/companies.md`). Add, pick,
@@ -169,13 +169,13 @@ rest). Each gets its parity checklist before its code.
 
 ## Questions for the maintainer
 
-1. **Themes.** The old app defines five themes but offers only Light and
-   Dark in its menu; Modern, America 250 and Pretty are hidden on purpose
-   (`components/theme/index.tsx`). Offer all five, or port all five and
-   keep the old menu's two?
-2. **Home.** The old Home is a greeting, create actions and dashboard
-   metrics, none of it backed yet. Keep Home out and send the logo and `/`
-   to Standard Reports until it is backed?
+1. **Themes.** *Answered 2026-11-24:* Light and Dark only, as the old menu
+   offers. The old app's three hidden skins (Modern, America 250, Pretty)
+   are not ported at all.
+2. **Home.** *Answered 2026-11-24:* Home stays out of the rail until its
+   dashboard is backed, and the logo and `/` open Bank Transactions. Home
+   comes back later: its greeting, create actions and dashboard metrics
+   are owed once the register and entry forms exist.
 3. **Copy that names someone else.** The old chart of accounts has a
    *QuickBooks balance* column, and every report's header says *John Doe*
    (a placeholder constant, `REPORT_USER_NAME`). Keep them as they are, or

@@ -1,6 +1,7 @@
 # Parity: app shell, themes and UI kit
 
-Status: checklist written 2026-11-24; nothing built.
+Status: step 2 built 2026-11-24. Every line is ticked, waiting for an API,
+or arriving with the step named on it.
 
 Old app: `src/components/layout/*`, `src/components/theme/*`,
 `src/components/ui/*`, `src/app/globals.css`, `src/styles/tailwind-overrides.css`,
@@ -8,110 +9,133 @@ Old app: `src/components/layout/*`, `src/components/theme/*`,
 
 Marks: `[ ]` to build, `[x]` built and checked against the old screen,
 **waiting:** a gl-node API it needs, **left out:** a placeholder in the old
-app (disabled, or a toast saying it isn't available), which we don't copy.
+app (disabled, or a toast saying it isn't available), which we don't copy,
+**step N:** built with that step's area.
+
+Checked against the old app's code and screenshots of ours in light and dark
+(the old app can't run without its Supabase backend). Behaviour is tested
+on the shipped export (Playwright project `app`) and, for parts no built
+screen shows yet, on the development-only UI kit page `/dev/ui-kit`
+(project `kit`).
 
 ## Tokens and themes
 
-- [ ] Every CSS variable of `:root` and `.dark` ported with the same names
-      and values
-- [ ] Modern, America 250 and Pretty ported with their extra rules (side
-      nav, top header, active icon, primary button, avatar, card); which
-      ones the menu offers: plan question 1
-- [ ] Font stack `"Avenir Next forINTUIT", "Avenir Next", Avenir, Helvetica,
+- [x] Every CSS variable of `:root` and `.dark` ported with the same names
+      and values (`src/styles/tokens.css`)
+- [x] Modern, America 250 and Pretty (hidden in the old app): **left out**,
+      not ported (plan question 1, answered: Light and Dark only)
+- [x] Font stack `"Avenir Next forINTUIT", "Avenir Next", Avenir, Helvetica,
       Arial, sans-serif`; never Inter or system-ui
-- [ ] Body background `--color-container-background-accent`, text
+- [x] Body background `--color-container-background-accent`, text
       `--color-text-global`
-- [ ] The `.qbo-checkbox` (20px, grey border, green when checked, the
+- [x] The `.qbo-checkbox` (20px, grey border, green when checked, the
       indeterminate dash, focus outline)
 - [ ] `.tw-override` report and header rules (`.header`, `.header-reports`,
-      `.header-filters`, `.page-title`, `.page-content`) as the reports use
-      them
-- [ ] Print rules: `.no-print` hidden, the report card prints alone
-- [ ] Theme menu in the top header (`ThemeToggle`: *Choose theme*, a check
-      beside the current one); default follows the system
-- [ ] A stored theme that is no longer offered resets to the system theme
+      `.header-filters`, `.page-title`, `.page-content`): **step 4**, with
+      the reports that use them
+- [x] Print rules: `.no-print`, rail and header hidden, the report card
+      prints alone (`src/styles/shell.css`)
+- [x] Theme menu in the top header (*Choose theme*, a check beside the
+      current one, closes on outside click and Escape); default follows
+      the system
+- [x] The old app's reset of a stored hidden skin: **left out**, as there
+      are no hidden skins to reset
 
 ## App shell
 
-- [ ] `p-[6px] pl-0` frame on the accent background; rail on the left;
+- [x] `p-[6px] pl-0` frame on the accent background; rail on the left;
       header and content on the right; content scrolls, rounded bottom
       corners (`--radius-x-large`)
-- [ ] Page title `New GL - <page>`, default `New GL`; description *The GL of
+- [x] Page title `New GL - <page>`, default `New GL`; description *The GL of
       accountants, by accountants, for accountants.*
 
 ## Side rail
 
-- [ ] 73px wide, `--color-sidebar-background`; logo (26px, `/logo.svg`,
-      alt *Quickslike logo*) linking home
-- [ ] Square items: 72px tall, 24px icon in a shell, 11px semibold label;
-      active shell style (`side-nav-icon-shell-active`)
-- [ ] Reports (`BookOpen`), active on `/reports…`
-- [ ] Accounting (`Landmark`): click goes to its first item; hover (350ms
+- [x] 73px wide, `--color-sidebar-background`; logo (26px, `/logo.svg`,
+      alt *Quickslike logo*) linking to `/`
+- [x] Square items: 72px tall, 24px icon in a 36px shell, 11px label;
+      hover and active shell filled with the nav colour
+- [ ] Reports (`BookOpen`), active on `/reports…`: **step 4**
+- [x] Accounting (`Landmark`): click goes to its first item; hover (350ms
       intent delay) or keyboard focus opens its flyout; Escape closes and
-      returns focus; leaving item and flyout closes
-- [ ] Accounting stays active on its pages and on pages under them
-- [ ] Home: **waiting:** its dashboard (plan question 2)
-- [ ] Expenses, Sales, More apps: **waiting:** their areas (store, entry
-      forms); hidden until one of their items is backed
-- [ ] Settings (bottom-pinned): **waiting:** any settings page that is
-      backed; hidden until then
+      returns focus; leaving item and flyout closes. **Fixed on the way:**
+      in the old app, Escape with focus inside the flyout reopened it as
+      focus went back to the icon. Shown once it has a page (**steps 5
+      and 6**)
+- [x] Accounting stays active on its pages and on pages under them
+- [ ] Home: **waiting:** its dashboard (the register, the entry forms).
+      Hidden until then; the logo and `/` open Bank Transactions instead
+      (plan question 2, answered; `/` becomes that redirect in **step 6**).
+      Owed: Home comes back with its greeting, create actions and metrics,
+      and the logo goes home again
+- [x] Expenses, Sales, More apps: hidden while none of their items is
+      backed (a category with no pages is not shown)
+- [x] Settings (bottom-pinned): hidden until a settings page is backed
 
 ## Flyouts
 
-- [ ] Category flyout: 256px card, uppercase title, items with a 16px
-      icon, hover background; only backed items listed
-- [ ] More apps flyout, two levels (category list, items panel to the
-      right): hidden while More apps is hidden
-- [ ] Locked items (grey, `Gem` icon): **left out**; the old app has the
+- [x] Category flyout: 256px card, uppercase title, items with a 16px
+      icon, hover background
+- [ ] More apps flyout, two levels: built with the first More apps
+      category (Customer Hub or Team, both **waiting:** the store, 015)
+- [x] Locked items (grey, `Gem` icon): **left out**; the old app has the
       support but lists none
 
 ## Top header
 
-- [ ] 57px, rounded top corners, company picker on the left, theme menu and
-      avatar menu on the right
-- [ ] Avatar menu: circle with an initial, the signed-in name, a menu with
-      *Sign out* (`LogOut` icon, *Signing out…* while it runs)
-- [ ] The name and initial: **waiting:** `me`. Until then the trigger shows
-      the active company's label and its initial (marked in
-      `docs/api-gaps.md`)
-- [ ] Skeletons the size of the real controls while loading, so nothing
-      shifts
-- [ ] Menus close on outside click and on Escape (focus back to the
+- [x] 57px, rounded top corners, theme menu on the right
+- [ ] Company picker on the left: **step 3**
+- [ ] Avatar menu (initial, name, *Sign out*): **step 3**; the name
+      **waiting:** `me`
+- [ ] Skeletons the size of the real controls while loading: **step 3**,
+      with the picker and avatar
+- [x] Menus close on outside click and on Escape (focus back to the
       trigger)
 
 ## Page header (list screens)
 
-- [ ] Breadcrumb row: *section / title*, 14px
-- [ ] *Give feedback* on the right of the breadcrumb: **left out** (disabled
+- [x] Breadcrumb row: *section / title*, 14px; an optional right side
+- [x] *Give feedback* on the right of the breadcrumb: **left out** (disabled
       in the old app)
-- [ ] 32px title, actions on the right, 22px gap below
+- [x] 32px title, actions on the right, 22px gap below
 
 ## All apps sub menu (pages under `/all-apps`)
 
-- [ ] Left sub menu, 256px, slides in and out (300ms, none with reduced
-      motion); *Hide sub menu* / *Show sub menu* buttons; starts closed and
-      remembers the choice in localStorage (`newgl:all-apps-submenu-open`)
-- [ ] Accordion of categories, one open at a time; the active page's
+- [x] Left sub menu, 256px, slides in and out (300ms, none with reduced
+      motion, none on first paint); *Hide sub menu* / *Show sub menu*;
+      starts closed and remembers the choice in localStorage
+      (`newgl:all-apps-submenu-open`, the old key), and still works for the
+      visit when storage is blocked
+- [x] Accordion of categories, one open at a time; the active page's
       category opens itself; active item highlighted
-- [ ] Only backed items listed (Accounting: Bank Transactions, Chart of
-      Accounts)
-- [ ] `/all-apps` alone goes to the first listed item
+- [x] Only backed items listed
+- [ ] `/all-apps` alone goes to the first listed item: **step 5**, with the
+      first page under it
 
 ## UI kit (`src/components/ui`)
 
-- [ ] Button: pill, sizes sm 32px, md 34px, lg 40px; primary, secondary,
-      ghost, destructive; one blue focus ring
-- [ ] Icon button, input field (label, sizes, focus ring, disabled colours),
-      number field (currency), select (search, *+ Add new*, right labels,
-      checkmark, sizes), filter select, textarea, checkbox, radio group
-- [ ] Modal, confirm dialog host, dropdown menu, tooltip
-- [ ] Table, card (12px radius, hairline border, no shadow in light and
-      dark), badge, skeleton
-- [ ] Toasts: success, error, info; title and description; the old
-      provider's placement and timing
+- [x] Button: pill, sizes sm 32px, md 34px, lg 48px (the old code's; its
+      DESIGN.md says 40px); primary, secondary, ghost, destructive; loading
+      spinner; icons; one blue focus ring
+- [x] Icon button, input field (label, error with icons, hint, sizes, focus
+      ring, disabled colours), number field (currency, right-aligned),
+      select (search, *+ Add new*, right labels, group headers, help text,
+      checkmark, sizes, *No matches*), filter select, textarea, checkbox
+      (indeterminate), radio group
+- [x] Modal (focus trap, Escape, backdrop click, focus returns), confirm
+      dialog host (resolves false with no host; its confirm button is the
+      secondary look, as in the old app), dropdown menu, tooltip
+- [x] Table parts, card (12px radius, hairline border, no shadow in light
+      and dark), badge, skeleton
+- [x] Toasts: success, error (an alert, 7s), info (4s); title and
+      description; top right
 
 ## Proof
 
-- [ ] Playwright: rail, flyout by hover and by keyboard, sub menu toggle
-      and memory, theme switch in each theme, screenshots of each theme
-- [ ] Each component compared with the old one, side by side
+- [x] Playwright `app`: the shell, hidden areas, the theme menu and its
+      memory, Escape, token colours in light and dark
+- [x] Playwright `kit`: the flyout by hover, a passing pointer, keyboard and
+      Escape; the sub menu and its memory; the select, modal, confirm
+      dialog, toasts, dropdown; a screenshot in light and dark
+- [x] bun test: navigation (visible categories, active category, current
+      item, rail links)

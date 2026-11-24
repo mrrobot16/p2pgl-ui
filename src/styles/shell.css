@@ -1,0 +1,79 @@
+/*
+  App-wide rules that are not Tailwind utilities: the side rail's icon
+  shell, the table checkbox, and printing. Their look is the old app's.
+*/
+
+/* Side rail: a 36px rounded square around each icon, filled on hover and
+   when active. */
+.side-nav .side-nav-icon-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-large);
+  color: var(--gbsg-nav-bar-icon-color);
+  transition:
+    color var(--duration-fade-fast) var(--ease-fade),
+    background-color var(--duration-fade-fast) var(--ease-fade);
+}
+
+.side-nav .group:hover .side-nav-icon-shell,
+.side-nav .side-nav-icon-shell-active {
+  background-color: var(--gbsg-nav-bar-action-color-hover);
+  color: var(--gbsg-nav-bar-icon-color-inverse);
+}
+
+/* The table checkbox: a 20px white box with a grey border, green when
+   checked, a dash when some rows are selected. */
+.qbo-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-field-border);
+  border-radius: 4px;
+  background-color: var(--color-container-background-primary);
+  cursor: pointer;
+}
+.qbo-checkbox:checked,
+.qbo-checkbox:indeterminate {
+  border-color: var(--color-qbo-green);
+  background-color: var(--color-qbo-green);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+}
+.qbo-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8.5l3.2 3.2L13 4.8'/%3E%3C/svg%3E");
+}
+.qbo-checkbox:indeterminate {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M3.5 8h9'/%3E%3C/svg%3E");
+}
+.qbo-checkbox:focus-visible {
+  outline: 2px solid var(--color-qbo-green);
+  outline-offset: 2px;
+}
+.qbo-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Printing shows the statement alone: no rail, no header, no controls. */
+@media print {
+  .side-nav,
+  .top-header,
+  .header-reports,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+  }
+  .report-print-card {
+    margin: 0 !important;
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

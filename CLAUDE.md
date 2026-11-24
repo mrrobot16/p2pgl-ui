@@ -24,8 +24,9 @@ decisions behind it are in openledger-v2's
 - **Same look as the old app, screen for screen:** shell (side rail, top
   header, company picker, apps flyout), page headers, tables, forms, modals,
   drawers, buttons, badges, toasts, spacing, typography, colours, icons
-  (lucide-react), the five themes, the font stack and the name. Design work
-  uses the impeccable skill as a refinement that preserves the old look,
+  (lucide-react), the light and dark themes (the old app's other three
+  skins are dropped), the font stack and the name. Design work uses the
+  impeccable skill as a refinement that preserves the old look,
   never a redesign. Don't change visual language, layout or copy unless the
   maintainer asks.
 - **Nothing on screen is a stub.** A screen, button or column appears only
@@ -57,11 +58,18 @@ decisions behind it are in openledger-v2's
   needs openledger-v2; never edit them by hand.
 - `bun run lint`, `bun run typecheck`, `bun run test` (unit tests under
   `src/`, with `bun test`).
-- `bun run test:e2e` — Playwright against the exported app (run `bun run
-  build` first) and a real gl-node, which the global setup starts from
-  `GL_NODE_BINARY` (default `../openledger-v2/target/release/gl-node`; this
-  repo never builds it) with a temporary data folder, a generated operator
-  key, P2P off, and CORS open to http://localhost:3000.
+- `bun run test:e2e` — Playwright, two projects. `app`: the exported app
+  (run `bun run build` first) against a real gl-node, which the global setup
+  starts from `GL_NODE_BINARY` (default
+  `../openledger-v2/target/release/gl-node`; this repo never builds it) with
+  a temporary data folder, a generated operator key, P2P off, and CORS open
+  to http://localhost:3000. `kit`: the development-only UI kit page
+  (`/dev/ui-kit`, every component in every theme) under `next dev` on port
+  3101, for shell parts no built screen shows yet. Stop any dev server on
+  3000 or 3101 first.
+- `DESIGN.md` and `PRODUCT.md` are the old app's, carried over for the
+  impeccable skill (PRODUCT.md with gl-node's facts); the old app stays the
+  reference.
 - Before calling work ready: lint, typecheck, unit tests, build and
   end-to-end tests all pass.
 
