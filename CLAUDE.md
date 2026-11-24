@@ -46,6 +46,25 @@ decisions behind it are in openledger-v2's
   install`, `bun add`, `bun run <script>`, `bun test`, `bunx` for one-off
   tools. Never npm, yarn, pnpm or npx; the lockfile is `bun.lock`.
 
+## Commands
+
+- `bun run dev` — the app on http://localhost:3000.
+- `bun run build` — the static export into `out/`.
+- `bun run codegen` — regenerate `src/graphql/generated/` from gl-node's two
+  schema files (read from `../openledger-v2`, or `OPENLEDGER_V2_PATH`) and
+  the `.graphql` operations under `src/graphql/ledger/` and
+  `src/graphql/node/`. The generated files are committed, so a build never
+  needs openledger-v2; never edit them by hand.
+- `bun run lint`, `bun run typecheck`, `bun run test` (unit tests under
+  `src/`, with `bun test`).
+- `bun run test:e2e` — Playwright against the exported app (run `bun run
+  build` first) and a real gl-node, which the global setup starts from
+  `GL_NODE_BINARY` (default `../openledger-v2/target/release/gl-node`; this
+  repo never builds it) with a temporary data folder, a generated operator
+  key, P2P off, and CORS open to http://localhost:3000.
+- Before calling work ready: lint, typecheck, unit tests, build and
+  end-to-end tests all pass.
+
 ## How to work
 
 - Before building an area, write `docs/parity/<area>.md`: everything the

@@ -1,0 +1,44 @@
+{
+  "name": "openledger-v0-ui",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "engines": {
+    "node": ">=24.0.0",
+    "bun": ">=1.3.13"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test src",
+    "test:e2e": "playwright test",
+    "serve:export": "bun tests/e2e/static-server.ts"
+  },
+  "dependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^8.0.0",
+    "@graphql-codegen/typed-document-node": "^8.0.0",
+    "@graphql-codegen/typescript": "^7.0.1",
+    "@graphql-codegen/typescript-operations": "^7.0.2",
+    "@playwright/test": "^1.55.0",
+    "@types/bun": "^1.3.0",
+    "@types/node": "^25.9.1",
+    "@types/react": "19.2.15",
+    "@types/react-dom": "19.2.3",
+    "autoprefixer": "^10.5.0",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.2.6",
+    "graphql": "^16.11.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "3.4.17",
+    "typescript": "^6.0.3"
+  }
+}

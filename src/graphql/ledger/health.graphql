@@ -1,0 +1,8 @@
+# The cheapest call a key can make on a company's ledger: proves the node is
+# reachable from the browser (CORS) and that the key is accepted.
+query LedgerHealth {
+  health {
+    status
+    version
+  }
+}

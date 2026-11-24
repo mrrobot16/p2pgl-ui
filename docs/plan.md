@@ -26,8 +26,10 @@ repo never edits openledger-v2.
 - **A typed client generated from the two schema files.** graphql-codegen
   reads `docs/api/schema.graphql` and `docs/api/node-schema.graphql` from
   openledger-v2 (path set in one place, `codegen.ts`) and our `.graphql`
-  operation files, and writes typed document nodes. One small `fetch`
-  wrapper sends them. No Apollo, no urql.
+  operation files, and writes typed operations (as strings, so no GraphQL
+  library ships to the browser). The generated files are committed: a
+  build, on Vercel too, never needs openledger-v2. One small `fetch`
+  wrapper sends them (`src/lib/gl-node/client.ts`). No Apollo, no urql.
 - **Companies live in `sessionStorage`:** each one is a node URL, a ledger
   name, a key and a display label. The picker switches between them.
   Switching is a hard boundary: the page reloads, so nothing fetched for the
@@ -62,7 +64,7 @@ repo never edits openledger-v2.
 | GraphQL | `@graphql-codegen/cli` with `typescript`, `typescript-operations` and `typed-document-node` | Typed operations over plain `fetch` |
 | Decimals | `big.js` | Small and exact; enough for adding and comparing amounts |
 | End-to-end tests | Playwright | Decided |
-| Lint | ESLint with Next's config, plus `id-length` (minimum 2) and `no-restricted-imports` (no `./` or `../`) | The code-style rules |
+| Lint | ESLint with Next's config, plus `id-length` (minimum 2), a rule against one-letter generic type parameters, and `no-restricted-imports` (no `./` or `../`) | The code-style rules |
 
 ## Layout of the repo
 

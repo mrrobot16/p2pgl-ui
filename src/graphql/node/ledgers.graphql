@@ -1,0 +1,8 @@
+# Every ledger the node holds (operator key only).
+query NodeLedgers {
+  ledgers {
+    name
+    served
+    reason
+  }
+}

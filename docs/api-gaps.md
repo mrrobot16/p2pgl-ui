@@ -47,8 +47,12 @@ Not in 011's plan yet:
 6. **A ledger created ready for people's keys.** Creating a company calls
    `addLedger`, then `grantAccess` on the new ledger. `grantAccess` needs a
    ledger that signs, and `addLedger(name)` with no settings makes one with
-   no mesh. The UI will pass `settings: '{"signing":{"enabled":true}}'`;
-   please confirm that is the intended way, or give `addLedger` a flag.
+   no mesh. Signing alone (`settings: '{"signing":{"enabled":true}}'`) is
+   refused at boot without a `p2p.meshId`, so the UI will call
+   `addLedger(name, newMeshPorts: …)` (a mesh of its own, which signs).
+   Please confirm that is the intended way, and say which port range a UI
+   should pass, since the browser cannot know the node's free UDP ports; or
+   give `addLedger` a "new company" form that needs neither.
 7. **Report columns in one request.** The old reports show a column per
    week, month, quarter or year, or a comparison with another period. The
    UI can ask for one report per column, about seven per request under the
