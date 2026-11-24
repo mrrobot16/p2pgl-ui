@@ -86,6 +86,9 @@ decisions behind it are in openledger-v2's
 - Code follows the `code-style` skill: full-word names (never single
   letters or abbreviations, generics included) and absolute imports only
   (`@/…`, never `./` or `../`).
+- UI code follows the `performance` skill: little JavaScript, one request
+  per screen, cheap renders, instant feedback, no photos or web fonts, and
+  measured before it's called done.
 
 ## Standing rules (from the maintainer)
 

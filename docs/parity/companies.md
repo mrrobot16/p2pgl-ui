@@ -21,11 +21,13 @@ because a company is now a node, a ledger and a key (intent decision 10).
 
 ## Sign-in screen (`/sign-in`)
 
-- [ ] The old auth layout: left half the brand panel (photo, green
-      gradient, *Double-entry, done right*, *Every transaction, perfectly
-      balanced.*, *The GL of accountants, by accountants, for accountants.*),
-      hidden below `lg`; right half the logo (green and white by theme),
-      the form centred, theme menu bottom right
+- [ ] The old auth layout: left half the brand panel (*Double-entry, done
+      right*, *Every transaction, perfectly balanced.*, *The GL of
+      accountants, by accountants, for accountants.*), hidden below `lg`;
+      right half the logo (green and white by theme), the form centred,
+      theme menu bottom right. **changed:** no photo (maintainer,
+      2026-11-24: keep it simple); the panel's text sits on the brand's dark
+      green
 - [ ] Heading *Welcome back*, line *Sign in to your books.*
 - [ ] **changed:** fields are *Node URL*, *Company* (ledger name) and *Key*
       instead of email and password; the form sits behind one `signIn`
