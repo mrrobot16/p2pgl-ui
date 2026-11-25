@@ -3,12 +3,15 @@
 import { useState, type FormEvent } from "react";
 
 import { FormButtons } from "@/components/companies/add-company-form";
-import type { FieldSize } from "@/components/ui/field-styles";
+import { NewKeyPanel } from "@/components/companies/new-key-panel";
 import { NodeUrlField, startingNodeUrl } from "@/components/companies/node-url-field";
+import { ServerSideCreationHint } from "@/components/companies/server-side-creation-hint";
+import type { FieldSize } from "@/components/ui/field-styles";
 import { InputField } from "@/components/ui/input-field";
 import type { Company, FieldErrors } from "@/lib/companies/company";
 import { createCompany } from "@/lib/companies/create-company";
 import { rememberCompany } from "@/lib/companies/use-companies";
+import { useNodeEndpoint } from "@/lib/companies/use-node-endpoint";
 
 type CreateCompanyFormProperties = {
   size?: FieldSize;
@@ -30,6 +33,9 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCa
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // The new company, held until its key has been shown (NewKeyPanel).
+  const [created, setCreated] = useState<Company | null>(null);
+  const nodeEndpoint = useNodeEndpoint(nodeUrl);
   const compact = size === "sm";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -40,8 +46,7 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCa
     // The operator key is not needed again; drop it from the form at once.
     setOperatorKey("");
     if (result.ok) {
-      rememberCompany(result.company);
-      onCreated(result.company);
+      setCreated(result.company);
       return;
     }
     setFieldErrors(result.fieldErrors);
@@ -49,9 +54,79 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCa
     setBusy(false);
   }
 
+  if (created) {
+    return (
+      <NewKeyPanel
+        companyName={created.ledgerName}
+        apiKey={created.apiKey}
+        compact={compact}
+        onContinue={() => {
+          // Remembered (and made active) only now, so the page behind the
+          // picker never shows the new company over the old one's data.
+          rememberCompany(created);
+          onCreated(created);
+        }}
+      />
+    );
+  }
+
   return (
     <form noValidate onSubmit={handleSubmit} className={`flex flex-col text-left ${compact ? "gap-2" : "gap-4"}`}>
       <NodeUrlField size={size} autoFocus={compact} disabled={busy} value={nodeUrl} error={fieldErrors.nodeUrl} onChange={setNodeUrl} />
+      {nodeEndpoint === "closed" ? (
+        <ServerSideCreationHint nodeUrl={nodeUrl} compact={compact} onCancel={onCancel} />
+      ) : (
+        <CreateFields
+          compact={compact}
+          size={size}
+          busy={busy}
+          ledgerName={ledgerName}
+          personName={personName}
+          operatorKey={operatorKey}
+          fieldErrors={fieldErrors}
+          message={message}
+          onLedgerNameChange={setLedgerName}
+          onPersonNameChange={setPersonName}
+          onOperatorKeyChange={setOperatorKey}
+          onCancel={onCancel}
+        />
+      )}
+    </form>
+  );
+}
+
+type CreateFieldsProperties = {
+  compact: boolean;
+  size: FieldSize;
+  busy: boolean;
+  ledgerName: string;
+  personName: string;
+  operatorKey: string;
+  fieldErrors: FieldErrors;
+  message: string | null;
+  onLedgerNameChange: (ledgerName: string) => void;
+  onPersonNameChange: (personName: string) => void;
+  onOperatorKeyChange: (operatorKey: string) => void;
+  onCancel?: () => void;
+};
+
+/** The rest of the form, for a node that creates companies from the browser. */
+function CreateFields({
+  compact,
+  size,
+  busy,
+  ledgerName,
+  personName,
+  operatorKey,
+  fieldErrors,
+  message,
+  onLedgerNameChange,
+  onPersonNameChange,
+  onOperatorKeyChange,
+  onCancel
+}: CreateFieldsProperties) {
+  return (
+    <>
       <InputField
         label="Company name"
         size={size}
@@ -62,7 +137,7 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCa
         disabled={busy}
         value={ledgerName}
         error={fieldErrors.ledgerName}
-        onChange={(event) => setLedgerName(event.target.value)}
+        onChange={(event) => onLedgerNameChange(event.target.value)}
       />
       <InputField
         label="Your name"
@@ -71,7 +146,7 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCa
         disabled={busy}
         value={personName}
         error={fieldErrors.personName}
-        onChange={(event) => setPersonName(event.target.value)}
+        onChange={(event) => onPersonNameChange(event.target.value)}
       />
       <InputField
         label="Operator key"
@@ -82,10 +157,10 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCa
         disabled={busy}
         value={operatorKey}
         error={fieldErrors.apiKey}
-        onChange={(event) => setOperatorKey(event.target.value)}
+        onChange={(event) => onOperatorKeyChange(event.target.value)}
       />
       {message ? <p className={`${compact ? "text-xs" : "text-sm"} text-[var(--color-negative)]`}>{message}</p> : null}
       <FormButtons compact={compact} busy={busy} submitLabel="Create" busyLabel="Creating…" onCancel={onCancel} />
-    </form>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { LedgerHealthDocument } from "@/graphql/generated/ledger";
 import { companyInputProblems, hasProblems, makeCompany, type Company, type CompanyInput, type FieldErrors } from "@/lib/companies/company";
-import { connectionErrorMessage } from "@/lib/companies/connection-messages";
-import { ledgerEndpointUrl, requestGraphql } from "@/lib/gl-node/client";
+import { connectionErrorMessage, NO_SUCH_COMPANY_MESSAGE } from "@/lib/companies/connection-messages";
+import { GlNodeError, ledgerEndpointUrl, requestGraphql } from "@/lib/gl-node/client";
 
 export type SignInResult = { ok: true; company: Company } | { ok: false; fieldErrors: FieldErrors; message: string | null };
 
@@ -25,6 +25,11 @@ export async function signIn(input: CompanyInput, fetchImplementation: typeof fe
       fetchImplementation
     );
   } catch (error) {
+    // With the operator key, the node says when there's no such company; it
+    // belongs under the company's name.
+    if (error instanceof GlNodeError && error.code === "NO_SUCH_LEDGER") {
+      return { ok: false, fieldErrors: { ledgerName: NO_SUCH_COMPANY_MESSAGE }, message: null };
+    }
     return { ok: false, fieldErrors: {}, message: connectionErrorMessage(error, company.nodeUrl) };
   }
   return { ok: true, company };

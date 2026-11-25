@@ -60,6 +60,14 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
       doesn't serve, alike) → *That key isn't accepted for this company.*;
       no answer → *Can't reach <node>. Check the address, that the node is
       running, and that its cors.allowedOrigins includes <this app>.*
+- [x] **3b:** with the node's operator key as the key (it opens every
+      company), the node also answers 404 `NO_SUCH_LEDGER` → *This node has
+      no company by that name.* (under *Company*), and 503
+      `LEDGER_NOT_SERVED` → *That company is on this node but failed to
+      start. Its operator can see why in the node's log.*
+- [x] **3b:** a `FORBIDDEN` answer anywhere reads *Your key can't do
+      this.* (gl-node 0.5.0 can't say a key's role, so nothing is hidden by
+      role: every screen shows, and this is said where it happens)
 - [x] On success: the company is added (or its key replaced), made active,
       and the app opens (a full load)
 - [x] Footer link: old *Don't have an account? Sign up* → **changed:**
@@ -75,6 +83,25 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
       that fetches
 
 ## Create a company (`/create-company`, and in the picker)
+
+- [x] **3b:** only where the node takes it. Once a node is chosen, one
+      check (at most two requests, remembered per node for the page):
+      `/node/graphql` without a key gives a GraphQL answer (the 401
+      included) → the form; otherwise, if `/health` answers, the node is
+      up but keeps that path closed (a server set up by the installer) →
+      in place of the form: *<host> creates companies on the server, not
+      here.* with `sudo openledger company add NAME`, then `sudo openledger
+      person add NAME --name "Your name" --role admin` for a key, *then
+      sign in with it*; if nothing answers, the form stays and *Create*
+      says it can't reach the node
+- [x] **3b:** after creating, the new key is shown once before going on:
+      *Your key to <company>*, the key in a read-only field with *Copy*
+      (*Copied*), *Copy it now and keep it somewhere safe. It can't be
+      shown again, and you'll need it to sign in from another browser or
+      after this tab closes.*, then *Continue*. The company is remembered
+      and made active only on *Continue*, so the page behind the picker
+      never shows the new company over the old one's data (the tab's
+      storage ends with the tab anyway, so waiting loses nothing)
 
 - [x] Old `/signup` → *Create your company*, *With your node's operator
       key.*; fields *Node URL*, *Company name* (with a hint on its form),
@@ -152,7 +179,11 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
 
 ## Proof
 
-- [x] bun test (`src/lib/companies/*.test.ts`): the company and its input
+- [x] bun test (`src/lib/companies/*.test.ts`): the node check
+      (`node-endpoint.test.ts`: a GraphQL answer, the 401 included, is
+      *available*; `/health` alone is *closed*; nothing is *unreachable*);
+      the messages for `FORBIDDEN`, `NO_SUCH_LEDGER` and
+      `LEDGER_NOT_SERVED`; the company and its input
       checks; the store (add, re-key in place, forget active and inactive,
       switch, storage round trip, malformed storage); sign-in and create
       against scripted answers (every error above, the order and keys of
@@ -162,7 +193,11 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
       unknown company; node down; bad input; prefill from the address;
       create with the operator key (and it is stored nowhere); existing
       name and wrong operator key; switch; add from the menu; forget
-      (inactive, active, last); each tab its own; sign out. The node
+      (inactive, active, last); each tab its own; sign out; the new key
+      shown once, copied, and kept only on *Continue*; a node that keeps
+      creation on the server (its `/node/graphql` blocked in the browser)
+      shows the commands and no form; the operator key's *no company by
+      that name*. The node
       chooser (`tests/e2e/app/node-chooser.spec.ts`): the environment's
       nodes listed with the first chosen; choosing another; typing your own
       address; typing narrows the list; Tab closes it; a `?node=` link wins;

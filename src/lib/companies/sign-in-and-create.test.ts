@@ -62,6 +62,26 @@ describe("signIn", () => {
     });
   });
 
+  test("with the operator key, a company the node doesn't have is named under the company field", async () => {
+    const { fetchImplementation } = scriptedFetch([
+      json({ errors: [{ message: 'this node serves no ledger named "nope"', extensions: { code: "NO_SUCH_LEDGER" } }] }, 404)
+    ]);
+    const result = await signIn({ ...input, ledgerName: "nope" }, fetchImplementation);
+    expect(result).toEqual({ ok: false, fieldErrors: { ledgerName: "This node has no company by that name." }, message: null });
+  });
+
+  test("with the operator key, a company that failed to start says so", async () => {
+    const { fetchImplementation } = scriptedFetch([
+      json({ errors: [{ message: 'ledger "acme" is not served: bad config', extensions: { code: "LEDGER_NOT_SERVED" } }] }, 503)
+    ]);
+    const result = await signIn(input, fetchImplementation);
+    expect(result).toEqual({
+      ok: false,
+      fieldErrors: {},
+      message: "That company is on this node but failed to start. Its operator can see why in the node's log."
+    });
+  });
+
   test("bad input is refused before anything is sent", async () => {
     const { fetchImplementation, requests } = scriptedFetch([]);
     const result = await signIn({ nodeUrl: "nope", ledgerName: "Acme", apiKey: "" }, fetchImplementation);

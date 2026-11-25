@@ -54,6 +54,14 @@ test.describe("sign-in", () => {
     await expect(page.getByText(/Can't reach http:\/\/127\.0\.0\.1:9\..*cors\.allowedOrigins includes http:\/\/localhost:3000/)).toBeVisible();
   });
 
+  test("with the operator key, a company the node doesn't have is named under the company field", async ({ page }) => {
+    const node = runningGlNode();
+    await page.goto("/sign-in");
+    await fillSignIn(page, { nodeUrl: node.url, ledgerName: uniqueLedgerName("nope"), key: node.operatorKey });
+    await expect(page.getByText("This node has no company by that name.")).toBeVisible();
+    await expect(page).toHaveURL(/\/sign-in$/);
+  });
+
   test("bad input is caught before anything is sent", async ({ page }) => {
     await page.goto("/sign-in");
     await fillSignIn(page, { nodeUrl: "ledger.example.com", ledgerName: "Acme Corp", key: "" });
@@ -71,9 +79,10 @@ test.describe("sign-in", () => {
 });
 
 test.describe("creating a company", () => {
-  test("the operator key creates it, its creator gets their own key, and the operator key is kept nowhere", async ({ page }) => {
+  test("the operator key creates it, its creator's key is shown once, and the operator key is kept nowhere", async ({ page }) => {
     const node = runningGlNode();
     const ledgerName = uniqueLedgerName("made");
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/create-company");
     await expect(page.getByRole("heading", { name: "Create your company" })).toBeVisible();
     await page.getByLabel("Node URL").fill(node.url);
@@ -82,11 +91,24 @@ test.describe("creating a company", () => {
     await page.getByLabel("Operator key").fill(node.operatorKey);
     await page.getByRole("button", { name: "Create" }).click();
 
+    // The new key, once, before anything else.
+    await expect(page.getByRole("heading", { name: `Your key to ${ledgerName}` })).toBeVisible();
+    await expect(page.getByText("It can't be shown again")).toBeVisible();
+    const shownKey = await page.getByLabel("Your key").inputValue();
+    expect(shownKey).not.toBe("");
+    expect(shownKey).not.toBe(node.operatorKey);
+    await page.getByRole("button", { name: "Copy" }).click();
+    await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(shownKey);
+    // Not remembered until Continue.
+    expect(await readStoredCompanies(page)).toBeNull();
+
+    await page.getByRole("button", { name: "Continue" }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(companyPickerButton(page)).toHaveText(ledgerName);
     const stored = await readStoredCompanies(page);
     expect(stored?.companies[0].ledgerName).toBe(ledgerName);
-    expect(stored?.companies[0].apiKey).not.toBe(node.operatorKey);
+    expect(stored?.companies[0].apiKey).toBe(shownKey);
     const everything = await page.evaluate(() => JSON.stringify({ ...window.sessionStorage, ...window.localStorage }));
     expect(everything).not.toContain(node.operatorKey);
   });
@@ -106,6 +128,30 @@ test.describe("creating a company", () => {
     await page.getByLabel("Operator key").fill("not-the-operator-key-0123456789");
     await page.getByRole("button", { name: "Create" }).click();
     await expect(page.getByText("That isn't this node's operator key.")).toBeVisible();
+  });
+
+  test("a node that keeps company creation on the server says how to do it there", async ({ page }) => {
+    const node = runningGlNode();
+    // As the installer's proxy does: /node/graphql never reaches the node, while /health does.
+    await page.route(`${node.url}/node/graphql`, (route) => route.abort());
+    await page.goto("/create-company");
+    await page.getByLabel("Node URL").fill(node.url);
+    const hint = page.getByRole("note");
+    await expect(hint).toContainText(`${new URL(node.url).host} creates companies on the server, not here.`);
+    await expect(hint).toContainText("sudo openledger company add NAME");
+    await expect(hint).toContainText('sudo openledger person add NAME --name "Your name" --role admin');
+    await expect(page.getByLabel("Operator key")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Create" })).toHaveCount(0);
+  });
+
+  test("a node that takes companies from the browser keeps the form", async ({ page }) => {
+    const node = runningGlNode();
+    await page.goto("/create-company");
+    await page.getByLabel("Node URL").fill(node.url);
+    // Give the check time to answer, then the form is still there.
+    await page.waitForResponse((response) => response.url() === `${node.url}/node/graphql`);
+    await expect(page.getByRole("note")).toHaveCount(0);
+    await expect(page.getByLabel("Operator key")).toBeVisible();
   });
 });
 
