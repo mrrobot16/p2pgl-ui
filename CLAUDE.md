@@ -56,6 +56,24 @@ decisions behind it are in openledger-v2's
   company and is never stored.
 - **Money is exact:** amounts stay decimal strings; sums use the decimal
   library, never JavaScript numbers.
+- **It looks like QuickBooks but is a Beancount ledger underneath:**
+  append-only and signed, so a transaction is never edited, voided or
+  deleted (a correction is a new, reversing entry). A transaction is known
+  by its `txid` (a hash of its content; writing it again returns the same
+  one with `alreadyExisted: true`) and has a date, a flag (`*` complete,
+  `!` needs review), payee, narration, tags, links, postings and who
+  entered it, with no type or status. An account is known by its Beancount
+  name (`Assets:Bank:Checking`; the first part is its type), with
+  `openedOn`, `closedOn` and currencies: no codes, categories or stored
+  balances. A form such as *Write check* produces one balanced
+  transaction. Reports come from the node; never rebuild them in the
+  browser from postings.
+- **Only what gl-node serves:** a screen or action is built once the node
+  has shipped what it needs. No mock data, stand-ins or workarounds (not
+  even to guess a key's role: every screen shows, and `FORBIDDEN` says
+  "Your key can't do this" where it happens). What's missing goes in
+  `docs/api-gaps.md` as *blocked: needs endpoint X*, or *needs a
+  decision* for anything that changes existing rows.
 - **The GraphQL client is generated** from the two schema files; plain
   `fetch`, no Apollo or urql.
 

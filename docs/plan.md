@@ -100,8 +100,22 @@ One place turns gl-node's answers into what the screen shows:
 - **Network failure** (node down, CORS refused, a plain-HTTP node from an
   HTTPS page): "Can't reach <node>". With a hint to check the node's
   `cors.allowedOrigins` when the browser reports a CORS failure.
+- **HTTP 429** (`RATE_LIMITED`, 60 GraphQL requests a minute per address):
+  "Too many requests, try again in a moment"; back off, never poll fast.
+- **With the operator key only:** HTTP 404 `NO_SUCH_LEDGER` (no company by
+  that name) and HTTP 503 `LEDGER_NOT_SERVED` (the company exists but failed
+  to start), each with its own plain message.
 - **Other GraphQL errors:** shown with the error's message, as the old app
   shows its API's messages.
+
+## The key's role (gl-node 0.5.0, until `me`)
+
+0.5.0 can't say which person or role a key has, and the role isn't worked
+out any other way (no probing with `accessList` or `bankInbox`). Every
+screen is shown; an action the key's role doesn't allow comes back
+`FORBIDDEN`, nothing runs, and the screen says "Your key can't do this"
+where it happened. When gl-node ships `me`, screens start hiding what a
+role can't do.
 
 ## Navigation in the first stage
 
@@ -133,19 +147,60 @@ end of each step, and commit only when the maintainer says so.
 3. **Companies and sign-in** (`docs/parity/companies.md`). Add, pick,
    switch, create with the operator key, sign out. The first page that
    proves the browser-to-node path: CORS, a key, one call.
-4. **Reports** (`docs/parity/reports.md`). Standard Reports index, Trial
-   Balance, Balance Sheet, Profit and Loss.
-5. **Chart of accounts, read-only** (`docs/parity/chart-of-accounts.md`).
-6. **Bank transactions** (`docs/parity/bank-transactions.md`). The inbox,
-   posting and excluding, connecting a bank through Plaid Link, mapping its
-   accounts.
+3b. **Sign-in to the 0.5.0 contract** (`docs/parity/companies.md`). The
+    operator key's 404 and 503 answers; "Your key can't do this" for
+    `FORBIDDEN`; the Companies screen only when
+    `/node/graphql` answers with GraphQL (a server set up by the installer
+    keeps it unreachable on purpose), otherwise the hint `sudo openledger
+    company add NAME`; the new person's key from creating a company shown
+    once, with a copy button.
+4. **Reports** (`docs/parity/reports.md`, read). Standard Reports index,
+   Trial Balance, Balance Sheet, Profit and Loss (`trialBalance`,
+   `balanceSheet`, `incomeStatement`).
+5. **Chart of accounts** (`docs/parity/chart-of-accounts.md`). The list
+   and one account's balance (`accounts`, `account(name, at)`, read); open
+   and close accounts (`openAccount`, `closeAccount`, write).
+6. **Transactions** (`docs/parity/transactions.md`). The journal, paged
+   on the node, 100 to 500 rows a page (`journal`), one transaction
+   (`transaction`), read; entering one (`appendTransaction`, write; at most
+   7 in one request). No editing, voiding or deleting: the ledger is
+   signed and append-only, so a correction is a new, reversing entry.
+7. **Bank transactions** (`docs/parity/bank-transactions.md`, write). The
+   inbox (`bankInbox`), posting (`classifyBankTransactions`) and excluding
+   (`ignoreBankTransactions`), the Update button.
+8. **Banks** (`docs/parity/banks.md`, admin). Connected banks, Plaid Link
+   (`createPlaidLinkToken`, `connectBank`), mapping accounts, refresh,
+   fetch, sync, disconnect, webhooks. The sandbox tools
+   (`connectSandboxBank`, `fireSandboxWebhook`, `resetSandboxLogin`) only
+   in environments whose settings allow them.
+9. **People** (`docs/parity/people.md`, admin). `accessList`,
+   `grantAccess` (the new key shown once, with a copy button and a line
+   saying it can't be shown again), `revokeAccess`, `renameUser`.
+10. **Node status** (`docs/parity/node-status.md`, read). `health`,
+    `verify`, `peers`.
+11. **Companies** (`docs/parity/companies-screen.md`, operator key, node
+    endpoint). `ledgers`, `addLedger`, `removeLedger`, `restartLedger`,
+    `inviteLedger`, `joinLedger`, `acceptLedger`; shown only where
+    `/node/graphql` answers.
 
-Then, as gl-node adds them: `me` (names and roles in the header, hiding
-what a key cannot do), account metadata (categories, codes, detail types:
-the chart's columns and the reports' finer sections), entry metadata, the
-register, the entry forms, more reports, corrections (undo and edit), and
-the store areas (customers, vendors, invoices, bills, receipts and the
-rest). Each gets its parity checklist before its code.
+How a screen gets built: only once gl-node serves what it needs. No mock
+data, no stand-ins, no workarounds. What a screen can't do goes in
+`docs/api-gaps.md` as **blocked: needs endpoint X**, or as **needs a
+decision** when it changes existing rows (register editing, void, delete,
+batch edits, cleared and reconciled flags, overwriting the `.bean`,
+restoring old versions): on an append-only ledger those need a product
+decision before anyone designs an endpoint. Before building a new unit,
+the node side writes down its exact GraphQL addition for us to comment on;
+the screen is built once that unit ships.
+
+Not in gl-node 0.5.0, so not built or faked: live updates
+(`transactionAppended` is in the schema, but no WebSocket serves it:
+refresh after an action, or poll slowly), `me` and a company display name
+(the next node release; until then the company's name as typed), editing,
+voiding or deleting transactions, and the store areas (vendors,
+customers, invoices, bills, reconciliation, recurring, receipts, `.bean`
+upload and download). When a step is blocked by one of these, it goes in
+`docs/api-gaps.md`; that list sets the order of the next node releases.
 
 ## Performance
 

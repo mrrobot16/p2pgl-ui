@@ -5,6 +5,31 @@ session that builds gl-node's API (openledger-v2 entry 011 and after). Each
 line names the screen that waits for it; the screen shows nothing in its
 place until it exists.
 
+Each entry is labelled for the node side, which picks its next unit from
+this list and writes down the exact GraphQL addition for us to comment on
+before building it:
+
+- **blocked: needs endpoint X**: a screen or action 0.5.0 can't do.
+- **needs a decision**: it changes existing rows, which an append-only,
+  signed ledger doesn't allow as such; it needs a product decision before
+  anyone designs an endpoint.
+
+## Needs a decision
+
+Screens and actions of the old app (and QuickBooks) built around changing
+rows. Listed so they aren't built as workarounds; each waits for a product
+decision on how it works on an append-only ledger.
+
+- Editing a posted transaction (the register's inline edit, the entry
+  forms opened on an existing transaction)
+- Voiding and deleting a transaction
+- *Undo* on a posted bank transaction (bank transactions' Posted tab)
+- Batch edits (batch actions on several rows at once)
+- The cleared and reconciled flags, and reconciliation itself
+- Overwriting the `.bean`, and restoring an old version
+
+## Blocked: needs an endpoint
+
 Already planned in 011 (listed so the screens can point at them):
 
 | Need | Screens waiting | 011 unit |
