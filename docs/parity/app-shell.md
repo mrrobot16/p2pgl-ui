@@ -98,17 +98,17 @@ screen shows yet, on the development-only UI kit page `/dev/ui-kit`
       in the old app)
 - [x] 32px title, actions on the right, 22px gap below
 
-## All apps sub menu (pages under `/all-apps`)
+## All apps sub menu (pages under `/app`, the old `/all-apps`)
 
 - [x] Left sub menu, 256px, slides in and out (300ms, none with reduced
       motion, none on first paint); *Hide sub menu* / *Show sub menu*;
       starts closed and remembers the choice in localStorage
-      (`newgl:all-apps-submenu-open`, the old key), and still works for the
+      (`newgl:app-submenu-open`), and still works for the
       visit when storage is blocked
 - [x] Accordion of categories, one open at a time; the active page's
       category opens itself; active item highlighted
 - [x] Only backed items listed
-- [ ] `/all-apps` alone goes to the first listed item: **step 5**, with the
+- [ ] `/app` alone goes to the first listed item: **step 5**, with the
       first page under it
 
 ## UI kit (`src/components/ui`)

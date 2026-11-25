@@ -22,7 +22,7 @@ read-only stage.
 
 ## Route and frame
 
-- [ ] `/all-apps/chart-of-accounts`, page title *Chart of Accounts*, inside
+- [ ] `/app/chart-of-accounts` (the old `/all-apps/…`; see CLAUDE.md), page title *Chart of Accounts*, inside
       the All apps sub menu
 - [ ] Page header: breadcrumb *Accounting / Chart of accounts*, title
       *Chart of accounts*

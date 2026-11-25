@@ -2,7 +2,7 @@
 
 import { Banknote, BookOpen, Building2, CalendarDays, Landmark, Plus, Printer, Settings, Settings2, Share } from "lucide-react";
 import { useState, type ReactNode } from "react";
-import { AllAppsFrame } from "@/components/layout/all-apps-frame";
+import { AppFrame } from "@/components/layout/app-frame";
 import { PageHeader } from "@/components/layout/page-header";
 import { SideRail } from "@/components/layout/side-rail";
 import { ThemeMenu } from "@/components/theme/theme-menu";
@@ -95,7 +95,7 @@ export function UiKitShowcase() {
             <SideRail links={SAMPLE_LINKS} categories={SAMPLE_CATEGORIES} settingsLink={SAMPLE_SETTINGS} />
             <div className="min-w-0 flex-1 p-[6px] pl-0">
               <div className="h-full rounded-[var(--radius-x-large)] bg-[var(--color-container-background-primary)]">
-                <AllAppsFrame categories={SAMPLE_CATEGORIES}>
+                <AppFrame categories={SAMPLE_CATEGORIES}>
                   <PageHeader
                     section="Accounting"
                     title="Bank transactions"
@@ -105,7 +105,7 @@ export function UiKitShowcase() {
                       </Button>
                     }
                   />
-                </AllAppsFrame>
+                </AppFrame>
               </div>
             </div>
           </div>

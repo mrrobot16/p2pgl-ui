@@ -7,8 +7,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useStoredFlag } from "@/lib/browser/stored-flag";
 import { APP_CATEGORIES, activeCategoryIdentifier, isCurrentItem, visibleCategories, type AppCategory } from "@/lib/navigation/apps";
 
-/** The old app's key, so a remembered choice reads the same. */
-export const SUBMENU_OPEN_STORAGE_KEY = "newgl:all-apps-submenu-open";
+/** Where the sub menu remembers being open. */
+export const SUBMENU_OPEN_STORAGE_KEY = "newgl:app-submenu-open";
 
 // Slides only after the remembered state is applied, so a sub menu that
 // was left open does not slide in on every page load.
@@ -22,11 +22,11 @@ function useMotionAfterFirstPaint(): boolean {
 }
 
 /**
- * The frame of every page under /all-apps: a 256px sub menu on the left
+ * The frame of every page under /app (the old app's /all-apps): a 256px sub menu on the left
  * that slides in and out, remembered between visits (closed by default),
  * and the page beside it.
  */
-export function AllAppsFrame({ children, categories = APP_CATEGORIES }: { children: ReactNode; categories?: AppCategory[] }) {
+export function AppFrame({ children, categories = APP_CATEGORIES }: { children: ReactNode; categories?: AppCategory[] }) {
   const [submenuOpen, setSubmenuOpen] = useStoredFlag(SUBMENU_OPEN_STORAGE_KEY);
   const motionEnabled = useMotionAfterFirstPaint();
   const motion = motionEnabled ? "transition-all duration-300 ease-out motion-reduce:transition-none" : "";
@@ -35,7 +35,7 @@ export function AllAppsFrame({ children, categories = APP_CATEGORIES }: { childr
     <div className="flex h-full min-h-0">
       <div className={`shrink-0 overflow-hidden ${motion} ${submenuOpen ? "w-64" : "w-0"}`} aria-hidden={!submenuOpen} inert={!submenuOpen}>
         <div className={`h-full w-64 ${motion} ${submenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-          <AllAppsSubmenu categories={categories} onCollapse={() => setSubmenuOpen(false)} />
+          <AppSubmenu categories={categories} onCollapse={() => setSubmenuOpen(false)} />
         </div>
       </div>
       <div className={`relative min-w-0 flex-1 overflow-y-auto bg-[var(--color-container-background-primary)] p-5 ${motion} ${submenuOpen ? "" : "pl-12"}`}>
@@ -58,7 +58,7 @@ export function AllAppsFrame({ children, categories = APP_CATEGORIES }: { childr
 }
 
 /** An accordion of the categories, one open at a time; the current page's category opens itself. */
-function AllAppsSubmenu({ categories, onCollapse }: { categories: AppCategory[]; onCollapse: () => void }) {
+function AppSubmenu({ categories, onCollapse }: { categories: AppCategory[]; onCollapse: () => void }) {
   const pathname = usePathname() ?? "/";
   const shownCategories = visibleCategories(categories);
   const activeCategory = activeCategoryIdentifier(pathname, categories);
