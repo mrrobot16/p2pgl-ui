@@ -51,13 +51,15 @@ The backend's speed is gl-node's work. These rules cover what the browser does: 
 
 ## 6. Measure
 
-Before you call a screen done:
+The React Compiler is on (`next.config.ts`): don't add `useMemo`, `useCallback` or `memo` by hand for speed; the compiler does it. A component that misbehaves under it opts out with `"use no memo"`, with a comment saying why.
 
-1. Run `bun run build` and read the route table: the screen's first-load JavaScript is within budget, and nothing grew that shouldn't have.
-2. Count the requests a screen makes when it opens (browser network panel or a Playwright request listener): one to gl-node, plus one per user action.
-3. On a large test ledger, check the screen shows its data quickly, and that typing in its search and changing its filters stays responsive.
+The budgets are tests. Before you call a screen done:
+
+1. `bun run build`, then `bun run budget`: every page's first-load JavaScript is at most 250 KB gzipped (`scripts/check-bundle-budget.ts`).
+2. Add the screen to `SCREENS` in `tests/e2e/app/budgets.spec.ts` and run `bun run test:e2e`: at most one request to gl-node on opening, content within 2 s, LCP (largest paint) within 1.5 s, CLS (layout shift) within 0.05. A data screen opens on the large test ledger.
+3. Check by hand that typing in the screen's search and changing its filters stays responsive (INP under 200 ms) on the large test ledger.
 4. For a heavy interaction (reports with many columns, the register), record it in React's Profiler and fix any render that takes more than one frame (16 ms) on its own.
 
-Targets, on the built app against a local node: LCP (the main content appearing) under 1.5 s, INP (response to a click or key) under 200 ms, CLS (layout shift) under 0.05.
+Never loosen a budget to make a test pass: make the screen lighter, or ask the maintainer.
 
 Say in your report which of these you checked and what the numbers were. If you skipped one, say so.

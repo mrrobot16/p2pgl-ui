@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test src",
     "test:e2e": "playwright test",
+    "budget": "bun scripts/check-bundle-budget.ts",
     "serve:export": "bun tests/e2e/static-server.ts"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
     "autoprefixer": "^10.5.0",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "9.39.1",
     "eslint-config-next": "16.2.6",
     "graphql": "^16.11.0",

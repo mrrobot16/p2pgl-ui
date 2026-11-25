@@ -76,8 +76,12 @@ decisions behind it are in openledger-v2's
 - `DESIGN.md` and `PRODUCT.md` are the old app's, carried over for the
   impeccable skill (PRODUCT.md with gl-node's facts); the old app stays the
   reference.
-- Before calling work ready: lint, typecheck, unit tests, build and
-  end-to-end tests all pass.
+- `bun run budget` — after a build: every page's first-load JavaScript is
+  within 250 KB gzipped. The other budgets (one gl-node request per screen,
+  load time, LCP, CLS) are `tests/e2e/app/budgets.spec.ts`, part of
+  `test:e2e`; every new screen is added to its `SCREENS`.
+- Before calling work ready: lint, typecheck, unit tests, build, budget
+  and end-to-end tests all pass.
 
 ## How to work
 

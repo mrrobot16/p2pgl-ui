@@ -146,6 +146,21 @@ register, the entry forms, more reports, corrections (undo and edit), and
 the store areas (customers, vendors, invoices, bills, receipts and the
 rest). Each gets its parity checklist before its code.
 
+## Performance
+
+The frontend rules are the `performance` skill. Two of them are built in
+(maintainer, 2026-11-25):
+
+- **The React Compiler** memoizes components at build time, so big screens
+  don't redraw what didn't change. Measured when it was turned on: clean
+  builds 9 s before, 9 to 11 s after; first-load JavaScript up 2 to 5 KB
+  a page (about 2%).
+- **Budgets that fail a commit:** `bun run budget` (first-load JavaScript
+  at most 250 KB gzipped per page) and `tests/e2e/app/budgets.spec.ts` (per
+  screen: at most one gl-node request on opening, content within 2 s, LCP
+  within 1.5 s, CLS within 0.05). From step 4, data screens are measured on
+  a large test ledger.
+
 ## Testing
 
 - **`bun test`** for logic with no browser: the account tree and rollups,

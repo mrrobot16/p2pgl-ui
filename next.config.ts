@@ -5,7 +5,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
-  trailingSlash: false
+  trailingSlash: false,
+  // The React Compiler memoizes components when the app is built, so big
+  // screens (reports, the register) don't redraw what didn't change. It
+  // costs some build time (docs/plan.md, Performance). A component that
+  // misbehaves under it opts out with the "use no memo" directive.
+  reactCompiler: true,
+  devIndicators: false
 };
 
 export default nextConfig;
