@@ -39,6 +39,18 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
       instead of email and password; *Sign in*, *Signing in…*. The form
       calls one function, `signIn` (`src/lib/companies/sign-in.ts`), so
       entry 013 swaps the form and that function only
+- [x] **New:** the *Node URL* field offers this environment's default
+      nodes (`APP_ENV`, `ENVIRONMENT_SETTINGS` in
+      `src/lib/environment/environment-settings.ts`) as a list to choose
+      from, and still takes any typed address. The first node is chosen at
+      the start; a `?node=` link or the active company's node wins over it.
+      The field shows the chosen node's name, with its address in the hint
+      below (*<address>, or type another node's address.*); the list shows
+      each node's name and host. Clicking into the field selects the name,
+      so typing replaces it; typing narrows the list, and the list gets out
+      of the way when nothing matches. Tab, a click outside or Escape
+      closes it. An environment with no default nodes gets the plain
+      address field. The same field is on create company and in the picker
 - [x] *Sign in with Google*: **left out** (no Google sign-in on gl-node)
 - [x] Checks before calling: node URL is `http(s)://` with no path; ledger
       name is 1 to 40 of `a-z`, `0-9`, `-`; key not empty; each with its
@@ -150,6 +162,10 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
       unknown company; node down; bad input; prefill from the address;
       create with the operator key (and it is stored nowhere); existing
       name and wrong operator key; switch; add from the menu; forget
-      (inactive, active, last); each tab its own; sign out
+      (inactive, active, last); each tab its own; sign out. The node
+      chooser (`tests/e2e/app/node-chooser.spec.ts`): the environment's
+      nodes listed with the first chosen; choosing another; typing your own
+      address; typing narrows the list; Tab closes it; a `?node=` link wins;
+      create company offers the same nodes
 - [x] Screenshots of sign-in, create and the open picker in light and dark,
       checked against the old pages

@@ -86,6 +86,23 @@ decisions behind it are in openledger-v2's
   Playwright doesn't support the Bun runtime at all. Don't switch without
   measuring again.
 
+## Environments
+
+- **`APP_ENV` decides the environment:** `development`, `preview`,
+  `staging` or `production`. `NEXT_PUBLIC_APP_ENV` is its copy for the
+  browser (a static export only passes `NEXT_PUBLIC_` variables to the
+  page, fixed at build time). Both are set in `.env` locally (see
+  `.env.example`) and in the Vercel project's settings for each deployed
+  environment.
+- **The build checks them:** `next.config.ts` stops `bun run dev` and `bun
+  run build` if either is missing, unknown, or they differ.
+- **Behaviour per environment lives in one table**,
+  `ENVIRONMENT_SETTINGS` in `src/lib/environment/environment-settings.ts`
+  (today: the default nodes offered on sign-in). Code reads
+  `environmentSettings` from `src/lib/environment/current-environment.ts`
+  and asks for a setting, never `if (appEnvironment === "production")`.
+  A new difference between environments is a new field in the table.
+
 ## Commands
 
 - `bun run dev` — the app on http://localhost:3000.
@@ -98,7 +115,8 @@ decisions behind it are in openledger-v2's
 - `bun run lint`, `bun run typecheck`, `bun run test` (unit tests under
   `src/`, with `bun test`).
 - `bun run test:e2e` — Playwright, two projects. `app`: the exported app
-  (run `bun run build` first) against a real gl-node, which the global setup
+  (run `bun run build` first, with `APP_ENV=development`: the node chooser
+  tests expect development's nodes) against a real gl-node, which the global setup
   starts from `GL_NODE_BINARY` (default
   `../openledger-v2/target/release/gl-node`; this repo never builds it) with
   a temporary data folder, a generated operator key, P2P off, and CORS open
@@ -149,6 +167,10 @@ decisions behind it are in openledger-v2's
 - Never `git push`. Commit only when the maintainer explicitly says so, for
   that specific commit.
 - Never commit or touch `.do_not_commit_ignore/` or `.env`.
+- Never read `.env` in any way (opening, printing, `grep`, `diff`,
+  loading it in a script), even when asked to look at it: auditors check
+  this. Read `.env.example` instead, or ask the maintainer for the
+  variable names.
 - No MFA, two-factor or Plaid-MFA work, and no notes about it, until the
   maintainer says Plaid has asked.
 - When the maintainer says "ask me questions", use the question dialog

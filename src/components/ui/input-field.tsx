@@ -22,7 +22,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProperties>(fun
         {...inputAttributes}
         id={fieldIdentifier}
         ref={forwardedReference}
-        aria-invalid={error ? true : undefined}
+        aria-invalid={error ? true : inputAttributes["aria-invalid"]}
         className={joinClasses(FIELD_BASE_CLASSES, FIELD_SIZE_CLASSES[size], error && FIELD_ERROR_CLASSES, className)}
       />
     </FieldFrame>

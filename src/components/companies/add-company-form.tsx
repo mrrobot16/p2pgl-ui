@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { FieldSize } from "@/components/ui/field-styles";
+import { NodeUrlField, startingNodeUrl } from "@/components/companies/node-url-field";
 import { InputField } from "@/components/ui/input-field";
 import type { Company, FieldErrors } from "@/lib/companies/company";
 import { signIn } from "@/lib/companies/sign-in";
@@ -25,8 +26,8 @@ type AddCompanyFormProperties = {
  * A company you have a key for: its node, its name there, and your key.
  * Checked against the node before it is remembered.
  */
-export function AddCompanyForm({ size = "lg", initialNodeUrl = "", initialLedgerName = "", submitLabel, busyLabel, onAdded, onCancel }: AddCompanyFormProperties) {
-  const [nodeUrl, setNodeUrl] = useState(initialNodeUrl);
+export function AddCompanyForm({ size = "lg", initialNodeUrl, initialLedgerName = "", submitLabel, busyLabel, onAdded, onCancel }: AddCompanyFormProperties) {
+  const [nodeUrl, setNodeUrl] = useState(() => startingNodeUrl(initialNodeUrl));
   const [ledgerName, setLedgerName] = useState(initialLedgerName);
   const [apiKey, setApiKey] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -51,19 +52,7 @@ export function AddCompanyForm({ size = "lg", initialNodeUrl = "", initialLedger
 
   return (
     <form noValidate onSubmit={handleSubmit} className={`flex flex-col text-left ${compact ? "gap-2" : "gap-4"}`}>
-      <InputField
-        label="Node URL"
-        size={size}
-        type="url"
-        inputMode="url"
-        autoComplete="url"
-        placeholder="https://ledger.example.com"
-        autoFocus={compact}
-        disabled={busy}
-        value={nodeUrl}
-        error={fieldErrors.nodeUrl}
-        onChange={(event) => setNodeUrl(event.target.value)}
-      />
+      <NodeUrlField size={size} autoFocus={compact} disabled={busy} value={nodeUrl} error={fieldErrors.nodeUrl} onChange={setNodeUrl} />
       <InputField
         label="Company"
         size={size}

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 
 import { FormButtons } from "@/components/companies/add-company-form";
 import type { FieldSize } from "@/components/ui/field-styles";
+import { NodeUrlField, startingNodeUrl } from "@/components/companies/node-url-field";
 import { InputField } from "@/components/ui/input-field";
 import type { Company, FieldErrors } from "@/lib/companies/company";
 import { createCompany } from "@/lib/companies/create-company";
@@ -21,8 +22,8 @@ type CreateCompanyFormProperties = {
  * creating it becomes its first admin and gets their own key; the operator
  * key is used for this one creation and kept nowhere.
  */
-export function CreateCompanyForm({ size = "lg", initialNodeUrl = "", onCreated, onCancel }: CreateCompanyFormProperties) {
-  const [nodeUrl, setNodeUrl] = useState(initialNodeUrl);
+export function CreateCompanyForm({ size = "lg", initialNodeUrl, onCreated, onCancel }: CreateCompanyFormProperties) {
+  const [nodeUrl, setNodeUrl] = useState(() => startingNodeUrl(initialNodeUrl));
   const [ledgerName, setLedgerName] = useState("");
   const [personName, setPersonName] = useState("");
   const [operatorKey, setOperatorKey] = useState("");
@@ -50,19 +51,7 @@ export function CreateCompanyForm({ size = "lg", initialNodeUrl = "", onCreated,
 
   return (
     <form noValidate onSubmit={handleSubmit} className={`flex flex-col text-left ${compact ? "gap-2" : "gap-4"}`}>
-      <InputField
-        label="Node URL"
-        size={size}
-        type="url"
-        inputMode="url"
-        autoComplete="url"
-        placeholder="https://ledger.example.com"
-        autoFocus={compact}
-        disabled={busy}
-        value={nodeUrl}
-        error={fieldErrors.nodeUrl}
-        onChange={(event) => setNodeUrl(event.target.value)}
-      />
+      <NodeUrlField size={size} autoFocus={compact} disabled={busy} value={nodeUrl} error={fieldErrors.nodeUrl} onChange={setNodeUrl} />
       <InputField
         label="Company name"
         size={size}
