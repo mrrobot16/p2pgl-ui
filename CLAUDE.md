@@ -52,6 +52,23 @@ decisions behind it are in openledger-v2's
 - **Bun** is the package manager, script runner and test runner: `bun
   install`, `bun add`, `bun run <script>`, `bun test`, `bunx` for one-off
   tools. Never npm, yarn, pnpm or npx; the lockfile is `bun.lock`.
+- **This is enforced**, and checked by `scripts/require-bun.test.ts`:
+  - `npm install` stops before downloading anything: `engines` names
+    `"please-use-bun"` for npm, yarn and pnpm, and `.npmrc` sets
+    `engine-strict`. yarn and pnpm are also refused by Corepack, since
+    `packageManager` is Bun. The `preinstall` script
+    (`scripts/require-bun.mjs`) refuses anything that gets past those.
+  - `next dev` and `next build` refuse to start unless launched through
+    Bun (`next.config.ts` checks `npm_config_user_agent`), so `npm run
+    build` and `npx next …` fail with the Bun-only message.
+  - Other lockfiles are ignored by git; `vercel.json` installs and builds
+    with Bun.
+- **Next itself runs on Node**, launched by Bun. Running it on the Bun
+  runtime (`bun --bun next …`) was tried on 2026-11-25: builds worked but
+  were about a second slower, and `next dev` from a cold start took twice
+  as long and failed 3 to 5 of the 12 kit tests every run (Node: 12 of 12).
+  Playwright doesn't support the Bun runtime at all. Don't switch without
+  measuring again.
 
 ## Commands
 

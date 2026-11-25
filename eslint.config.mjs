@@ -25,7 +25,7 @@ export default defineConfig([
           patterns: [
             {
               regex: "^\\.{1,2}(/|$)",
-              message: "Use an absolute import (@/… or @tests/…), never a relative one."
+              message: "Use an absolute import (@/…, @tests/… or @scripts/…), never a relative one."
             }
           ]
         }

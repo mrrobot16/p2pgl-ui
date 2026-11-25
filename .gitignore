@@ -17,3 +17,9 @@ test-results
 playwright-report
 blob-report
 playwright/.cache
+
+# Bun only: other package managers' lockfiles never belong here
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+pnpm-lock.yaml
