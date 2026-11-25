@@ -12,6 +12,13 @@ decisions behind it are in openledger-v2's
 - **The old app** (`.do_not_commit_ignore/newgl-ui`) is the reference for
   every screen: read its screens, components, `DESIGN.md` and `PRODUCT.md`.
   Read-only. Never copy its code wholesale; write our own.
+- **QuickBooks Online screenshots**
+  (`.do_not_commit_ignore/source-qbo-screenshots/`, indexed in
+  `docs/qbo-reference.md`) are the reference for structure and positions:
+  what sits where on each screen. When the old app and these disagree on
+  structure, QuickBooks' structure wins; colours, fonts and styling stay
+  the old app's. Never carry over QuickBooks' or Intuit's name, logo or
+  artwork. Read the screenshots for a screen before building it.
 - **gl-node** (openledger-v2, `/Users/samurai/code/openledger/openledger-v2`)
   is the backend. Read-only: never edit it. Its API contract is
   `docs/api/schema.graphql` (a ledger's endpoint) and
