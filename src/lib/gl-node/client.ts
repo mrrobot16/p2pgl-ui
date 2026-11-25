@@ -15,10 +15,12 @@ export type GlNodeEndpoint = {
  *   refused the call (CORS), or an HTTPS page called a plain-HTTP node.
  *   Browsers do not tell these apart.
  * - `httpStatus`: any other non-success HTTP status.
+ * - `rateLimited`: too many requests from this address (HTTP 429, `RATE_LIMITED`);
+ *   gl-node allows 60 GraphQL requests a minute per client address.
  * - `graphql`: the node answered with a GraphQL error (`code` when it gave one).
  * - `invalidResponse`: the answer was not GraphQL's JSON shape.
  */
-export type GlNodeErrorKind = "unauthorized" | "forbidden" | "unreachable" | "httpStatus" | "graphql" | "invalidResponse";
+export type GlNodeErrorKind = "unauthorized" | "forbidden" | "rateLimited" | "unreachable" | "httpStatus" | "graphql" | "invalidResponse";
 
 export class GlNodeError extends Error {
   readonly kind: GlNodeErrorKind;
@@ -97,6 +99,10 @@ export async function requestGraphql<Result, Variables>(
 
   if (response.status === 401) {
     throw new GlNodeError("unauthorized", "The key was not accepted.", { status: 401 });
+  }
+
+  if (response.status === 429) {
+    throw new GlNodeError("rateLimited", "Too many requests to the node.", { status: 429, code: "RATE_LIMITED" });
   }
 
   let payload: GraphqlResponsePayload<Result>;

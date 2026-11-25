@@ -75,6 +75,20 @@ describe("requestGraphql", () => {
     expect(error.status).toBe(401);
   });
 
+  test("a 429 is rate-limited", async () => {
+    const error = await caughtError(
+      requestGraphql(
+        endpoint,
+        LedgerHealthDocument,
+        undefined,
+        fakeFetch(() => jsonResponse({ data: null, errors: [{ message: "rate limited", extensions: { code: "RATE_LIMITED" } }] }, 429))
+      )
+    );
+    expect(error.kind).toBe("rateLimited");
+    expect(error.status).toBe(429);
+    expect(error.code).toBe("RATE_LIMITED");
+  });
+
   test("a FORBIDDEN error is forbidden, whatever comes before it", async () => {
     const error = await caughtError(
       requestGraphql(

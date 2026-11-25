@@ -171,9 +171,25 @@ The frontend rules are the `performance` skill. Two of them are built in
   `target/release/gl-node`; this repo never builds it) on loopback with a
   temporary data folder, `cors.allowedOrigins: ["http://localhost:3000"]`
   and a generated operator key. Each flow creates its own company through
-  the UI or the node endpoint and seeds it with `openAccount` and
-  `appendTransaction`. Totals on screen are checked against what gl-node
-  returns for the same query.
+  the UI or the node endpoint. Totals on screen are checked against what
+  gl-node returns for the same query.
+- **Seeding books goes through the `.bean`, never the API** (openledger-v2
+  session, 2026-11-25). The API allows at most 7 `appendTransaction` a
+  request and 60 requests a minute, so 10,000 entries would take about 24
+  minutes and spend the tests' own request budget. Instead: create the
+  company with `addLedger`, stop gl-node, append `open` lines then
+  transactions (no `openledger-*` metadata; every account opened on or
+  before its first use) to the ledger's `.bean` (the `ledgerPath` its
+  `ledger.json` names), start gl-node again, and it adopts and signs them
+  at boot. One `trialBalance` then checks the counts and totals. The large
+  test ledger is written once and copied for each run.
+- **The 60-a-minute limit is shared by the whole run:** gl-node counts
+  GraphQL requests per client address, every Playwright worker is
+  127.0.0.1, and the limit can't be changed. Tests make few requests each,
+  create companies sparingly (two requests each), and, if the run grows
+  past the limit, each worker gets its own gl-node. A rate-limit refusal
+  in a test is a test-design problem, not a UI bug, and is reported as
+  such.
 - **Plaid** flows run in Plaid's sandbox when the gl-node under test has
   sandbox credentials, using `connectSandboxBank` to skip Link. Without
   credentials those flows are skipped, and the run says so.

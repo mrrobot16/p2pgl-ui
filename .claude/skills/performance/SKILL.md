@@ -24,6 +24,7 @@ The backend's speed is gl-node's work. These rules cover what the browser does: 
 - **Cancel what is no longer wanted** with an `AbortController`: on navigating away, and when a filter or search changes mid-request.
 - **Ask only for the fields on screen.** Every field in a `.graphql` operation must be shown or used.
 - **Page on the node.** Never fetch a whole list to page or filter it in the browser when gl-node can do it.
+- **Mind the rate limit.** gl-node allows 60 GraphQL requests a minute per client address, shared by everyone behind that address. Never fetch per keystroke (filter what's loaded, or wait until typing stops), and never refetch what the cache already holds unless it may have changed. A refusal must show as "too many requests, try again in a moment", never as a broken screen.
 
 ## 3. Render cheaply
 

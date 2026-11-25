@@ -13,6 +13,8 @@ export function connectionErrorMessage(error: unknown, nodeUrl: string, keyKind:
       return `Can't reach ${nodeUrl}. Check the address, that the node is running, and that its cors.allowedOrigins includes ${originHint()}.`;
     case "forbidden":
       return "This key isn't allowed to do that.";
+    case "rateLimited":
+      return `Too many requests to ${nodeUrl} from this address. Wait a moment and try again.`;
     case "graphql":
       return error.message;
     case "httpStatus":

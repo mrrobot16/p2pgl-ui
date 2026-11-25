@@ -52,6 +52,15 @@ describe("signIn", () => {
     }
   });
 
+  test("a rate-limited node asks to wait", async () => {
+    const { fetchImplementation } = scriptedFetch([json({ data: null, errors: [{ message: "rate limited", extensions: { code: "RATE_LIMITED" } }] }, 429)]);
+    expect(await signIn(input, fetchImplementation)).toEqual({
+      ok: false,
+      fieldErrors: {},
+      message: "Too many requests to https://ledger.example.com from this address. Wait a moment and try again."
+    });
+  });
+
   test("bad input is refused before anything is sent", async () => {
     const { fetchImplementation, requests } = scriptedFetch([]);
     const result = await signIn({ nodeUrl: "nope", ledgerName: "Acme", apiKey: "" }, fetchImplementation);

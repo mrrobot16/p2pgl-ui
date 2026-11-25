@@ -67,5 +67,16 @@ Not in 011's plan yet:
    *Noted 2026-11-24:* a small gl-node change, after the current rename
    unit.
 
+9. **The GraphQL rate limit is low for a UI, and per address.** gl-node
+   allows 60 GraphQL requests a minute per client address
+   (`GRAPHQL_RATE_LIMIT` in `rate_limit.rs`, not configurable). One person
+   clicking through screens, opening drill-downs and refreshing cached
+   data can reach it; and an office behind one public address, several
+   accountants together, shares the 60. A refusal looks to the person like
+   a broken screen. Wanted: a limit per key rather than per address for
+   authenticated requests, or a higher or configurable one. Until then the
+   UI keeps to one request per screen, caches answers, and never fetches
+   per keystroke (the performance skill).
+
 Until an item lands, its part of the UI stays out (no stubs) or uses the
 slower fallback named above (openledger-v2 session, 2026-11-24).
