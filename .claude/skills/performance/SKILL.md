@@ -12,7 +12,7 @@ The backend's speed is gl-node's work. These rules cover what the browser does: 
 
 - **`"use client"` goes on the leaves.** Pages and layouts stay server components, rendered into the static HTML at build time. Only the interactive part (a filter, a menu, a selectable table) is a client component. Never mark a whole page `"use client"` to make one button work.
 - **Load rare, heavy code on demand** with `next/dynamic` or a dynamic `import()`: Plaid Link's script only when *Link account* is clicked, modals and side panels when they open, editors on their own screen.
-- **Check a package's size before adding it** (bundlephobia or the build output). Use the browser first: `Intl` for numbers and dates, `fetch`, native elements. No moment, lodash, date libraries, UI frameworks or GraphQL clients. Import icons one by one from `lucide-react`.
+- **Check a package's size before adding it** (bundlephobia or the build output). Use the browser first: `Intl` for numbers and dates, `fetch`, native elements. No moment, lodash, date libraries, UI frameworks or GraphQL clients. Import icons one by one from `lucide-react`. A package that is added goes in at an exact version (the `code-style` skill, rule 4).
 - **Budget:** at most 250 KB of first-load JavaScript per route, gzipped. The empty shell is about 200 KB. Read `next build`'s route table after any change that adds code.
 
 ## 2. Fetch data well

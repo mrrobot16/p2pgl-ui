@@ -64,6 +64,10 @@ decisions behind it are in openledger-v2's
 - **Bun** is the package manager, script runner and test runner: `bun
   install`, `bun add`, `bun run <script>`, `bun test`, `bunx` for one-off
   tools. Never npm, yarn, pnpm or npx; the lockfile is `bun.lock`.
+- **Exact versions only:** every dependency in `package.json` names one
+  version (`"1.2.3"`), never a range (`^`, `~`, `>=`). `bunfig.toml` sets
+  `exact = true`, so `bun add` writes them that way. Upgrading a package is
+  a deliberate change: `bun add <package>@<version>`.
 - **This is enforced**, and checked by `scripts/require-bun.test.ts`:
   - `npm install` stops before downloading anything: `engines` names
     `"please-use-bun"` for npm, yarn and pnpm, and `.npmrc` sets
@@ -124,8 +128,9 @@ decisions behind it are in openledger-v2's
   include `http://localhost:3000`.
 - Code follows the `code-style` skill: full-word names (never single
   letters or abbreviations, generics included), absolute imports only
-  (`@/…`, never `./` or `../`), and package imports first, then a blank
-  line, then ours (`bun run lint --fix` sorts that out).
+  (`@/…`, never `./` or `../`), package imports first, then a blank line,
+  then ours (`bun run lint --fix` sorts that out), and at most 500 lines
+  per `.ts` or `.tsx` file (split by what the parts do, never by squeezing).
 - UI code follows the `performance` skill: little JavaScript, one request
   per screen, cheap renders, instant feedback, no photos or web fonts, and
   measured before it's called done.

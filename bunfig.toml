@@ -1,0 +1,4 @@
+# Exact versions only: `bun add` writes "1.2.3", never "^1.2.3", so every
+# install gets the versions package.json names.
+[install]
+exact = true
