@@ -30,7 +30,7 @@ decisions behind it are in openledger-v2's
   never a redesign. Don't change visual language, layout or copy unless the
   maintainer asks.
 - **`all-apps` is `app` here:** anything the old app named `all-apps` is
-  `app` in this repo. Routes: `/app/bank-transactions`,
+  `app` in this repo. Routes: `/app/banking`,
   `/app/chart-of-accounts`, and `/app` alone goes to the first page listed.
   File and code names too (`app-frame.tsx`, `AppFrame`). Never create a
   route, file or name with `all-apps`. The sub menu keeps its *All apps*

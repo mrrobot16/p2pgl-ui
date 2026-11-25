@@ -31,7 +31,7 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 
 ## Route and header
 
-- [ ] `/app/bank-transactions` (the old `/all-apps/…`; see CLAUDE.md), page title *Bank Transactions*, inside
+- [ ] `/app/banking` (the old `/all-apps/bank-transactions`; see CLAUDE.md), page title *Bank Transactions*, inside
       the All apps sub menu
 - [ ] Page header: *Accounting / Bank transactions*, title *Bank
       transactions*

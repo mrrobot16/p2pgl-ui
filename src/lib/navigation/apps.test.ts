@@ -8,7 +8,7 @@ const categories: AppCategory[] = [
     label: "Accounting",
     icon: Landmark,
     items: [
-      { label: "Bank Transactions", href: "/app/bank-transactions", icon: Banknote },
+      { label: "Bank Transactions", href: "/app/banking", icon: Banknote },
       { label: "Reconcile", href: "/app/reconcile", icon: Receipt },
       { label: "Chart of Accounts", href: "/app/chart-of-accounts", icon: Building2 }
     ]
