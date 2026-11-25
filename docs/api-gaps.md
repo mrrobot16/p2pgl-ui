@@ -50,11 +50,22 @@ Not in 011's plan yet:
    no mesh. Signing alone (`settings: '{"signing":{"enabled":true}}'`) is
    refused at boot without a `p2p.meshId`, so the UI will call
    `addLedger(name, newMeshPorts: …)` (a mesh of its own, which signs).
-   Please confirm that is the intended way, and say which port range a UI
-   should pass, since the browser cannot know the node's free UDP ports; or
-   give `addLedger` a "new company" form that needs neither.
+   *Answered 2026-11-24 (openledger-v2 session):* yes, `addLedger(name,
+   newMeshPorts: "4433-4532")` (the installer's UDP range, the UI's
+   default), then `grantAccess` on `/ledgers/<new>/graphql` with the same
+   operator key. A later gl-node change lets `addLedger(name)` use the
+   node's own range; the UI drops the argument then.
 7. **Report columns in one request.** The old reports show a column per
    week, month, quarter or year, or a comparison with another period. The
    UI can ask for one report per column, about seven per request under the
    query-cost limit. Fine to start; `incomeStatement` taking a list of
    periods would make a twelve-month report one call.
+8. **The browser remembering CORS permission.** gl-node's CORS layer
+   (`config.rs`, `cors_layer()`) sends no `Access-Control-Max-Age`, so
+   Chrome repeats the permission check (preflight) every 5 seconds and most
+   calls cost two round trips. Wanted: `.max_age(…)`, up to 2 hours.
+   *Noted 2026-11-24:* a small gl-node change, after the current rename
+   unit.
+
+Until an item lands, its part of the UI stays out (no stubs) or uses the
+slower fallback named above (openledger-v2 session, 2026-11-24).

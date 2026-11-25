@@ -90,6 +90,12 @@ decisions behind it are in openledger-v2's
   per screen, cheap renders, instant feedback, no photos or web fonts, and
   measured before it's called done.
 
+## Things Claude gets wrong here
+
+- Turbopack drops the space between a closing tag and text that runs on to
+  a line break (`<span>{name}</span> from this…` renders "namefrom"). Write
+  the space explicitly: `{" from this…"}` or `{" "}`.
+
 ## Standing rules (from the maintainer)
 
 - Never add an "Author:" or byline line to any Markdown file.

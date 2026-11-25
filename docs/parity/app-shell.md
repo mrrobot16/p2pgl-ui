@@ -84,11 +84,10 @@ screen shows yet, on the development-only UI kit page `/dev/ui-kit`
 ## Top header
 
 - [x] 57px, rounded top corners, theme menu on the right
-- [ ] Company picker on the left: **step 3**
-- [ ] Avatar menu (initial, name, *Sign out*): **step 3**; the name
-      **waiting:** `me`
-- [ ] Skeletons the size of the real controls while loading: **step 3**,
-      with the picker and avatar
+- [x] Company picker on the left (docs/parity/companies.md)
+- [x] Avatar menu (initial, name, *Sign out*); the person's name
+      **waiting:** `me`, the company's label until then
+- [x] Skeletons the size of the real controls while loading
 - [x] Menus close on outside click and on Escape (focus back to the
       trigger)
 

@@ -34,9 +34,9 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 - [ ] Page title, then the filter row (`header-filters`)
 - [ ] Report card: max 840px, centred, hairline border, *Print* button
       (secondary, small, hidden when printing) calling the browser's print
-- [ ] Card heading: the company name (28px) **changed:** the old one shows
-      a placeholder, *John Doe*; plan question 3; then the report's name,
-      then its date line
+- [ ] Card heading: the active company's label (28px) **changed:** the old
+      one shows a placeholder, *John Doe* (plan question 3, answered); then
+      the report's name, then its date line
 - [ ] Sections are collapsible rows (chevron, Enter and Space toggle);
       accounts nest by their `:` segments with per-level indent; a parent
       with children collapses its subtree
@@ -128,9 +128,9 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
       (query cost); see `docs/api-gaps.md` item 7
 - [ ] Customer (the old default), Employee, Product/Service, Vendor, Days:
       **left out** (inert in the old app: each shows the normal single
-      column). With them gone the select needs a default that means one
-      Total column: plan question 6. Customer, Vendor and Product/Service
-      come back with the store and dimensions
+      column). *Total only* (one Total column) is the default instead
+      (plan question 6, answered). Customer, Vendor and Product/Service come
+      back with the store and dimensions
 
 ## Compare to
 

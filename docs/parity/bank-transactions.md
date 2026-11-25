@@ -93,7 +93,11 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
       in the old app; a hand entry belongs to the entry forms or drafts)
 - [ ] *Load sample transactions*: **left out** (dev-only local data)
 - [ ] *Go to bank register*: **waiting:** `register`
-- [ ] *Update* (fetch now): plan question 5
+- [ ] **new:** *Update* (plan question 5, answered): calls
+      `fetchBankTransactions` for every connected bank, then reloads the
+      inbox; a toast says what came in (*N new transactions*, or *You're up
+      to date*). Admin keys; a refusal (`FORBIDDEN`) says it needs an admin
+      key
 - [ ] Search (320px) over the description and payee
 - [ ] *Filter by date*: All dates, Last 30 days, This month, This year
       (Pending and Posted)

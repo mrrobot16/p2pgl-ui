@@ -1,0 +1,9 @@
+# Creates a company's ledger on the node, in a mesh of its own so it signs
+# and can issue people's keys (operator key only).
+mutation AddLedger($name: String!, $newMeshPorts: String) {
+  addLedger(name: $name, newMeshPorts: $newMeshPorts) {
+    name
+    served
+    reason
+  }
+}

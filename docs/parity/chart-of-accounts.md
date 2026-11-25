@@ -76,7 +76,8 @@ read-only stage.
 - [ ] *Account type* (with the sort arrow): **waiting:** account
       categories; until then blank
 - [ ] *Detail type*: **waiting:** account detail types; blank until then
-- [ ] *QuickBooks balance* header: plan question 3. Values: the balance
+- [ ] *Balance* header (**changed** from *QuickBooks balance*, plan
+      question 3, answered). Values: the balance
       from `trialBalance(at: today)` in the account's normal direction; a
       parent shows the sum of its subtree (rollup); `$0.00` for none
 - [ ] *Bank balance*: `--` for every account, as in the old app;

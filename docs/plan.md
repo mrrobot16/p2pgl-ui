@@ -176,24 +176,17 @@ rest). Each gets its parity checklist before its code.
    dashboard is backed, and the logo and `/` open Bank Transactions. Home
    comes back later: its greeting, create actions and dashboard metrics
    are owed once the register and entry forms exist.
-3. **Copy that names someone else.** The old chart of accounts has a
-   *QuickBooks balance* column, and every report's header says *John Doe*
-   (a placeholder constant, `REPORT_USER_NAME`). Keep them as they are, or
-   use *Balance* and the company's label?
-4. **Removing a company.** The old picker's trash icon deleted the company
-   on the server. Here it could mean forgetting it in this browser, or
-   `removeLedger` on the node (operator key; gl-node moves the folder aside,
-   it never deletes). Which, or both?
-5. **Fetching bank transactions.** The old screen had no bank feed. gl-node
-   fills the inbox from Plaid's webhooks when they are set up, or on
-   `fetchBankTransactions` (admin). Add an *Update* button (QuickBooks has
-   one there) that fetches every connected bank?
-
-6. **Report options that did nothing.** The old *Display columns by*
-   select defaults to *Customer*, which, like Employee, Product/Service,
-   Vendor and Days, did nothing; several *Compare to* options did nothing
-   either. Leaving them out (no stubs) means the select needs a new default
-   meaning one Total column. Label it *Total only* (QuickBooks' wording)?
+3. **Copy that names someone else.** *Answered 2026-11-24:* the chart of
+   accounts' column reads *Balance* (not *QuickBooks balance*), and report
+   headers show the active company's label (not the placeholder *John Doe*).
+4. **Removing a company.** *Answered 2026-11-24:* the trash icon forgets the
+   company in this browser only; the ledger stays on its node, untouched.
+5. **Fetching bank transactions.** *Answered 2026-11-24:* yes, an *Update*
+   button on Bank transactions calls `fetchBankTransactions` for every
+   connected bank (admin keys).
+6. **Report options that did nothing.** *Answered 2026-11-24:* they are
+   left out, and *Display columns by* defaults to *Total only* (one Total
+   column); its options are Total only, Weeks, Months, Quarter, Years.
 
 ## Risks
 

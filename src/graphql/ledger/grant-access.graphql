@@ -1,0 +1,10 @@
+# Gives a new person access to a company. The key comes back this once;
+# the node keeps only its hash.
+mutation GrantAccess($name: String!, $role: AccessRole!) {
+  grantAccess(name: $name, role: $role) {
+    userId
+    name
+    role
+    key
+  }
+}

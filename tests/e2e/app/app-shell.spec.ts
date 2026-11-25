@@ -1,6 +1,17 @@
 import { expect, test } from "@playwright/test";
+import { createCompanyOnNode, seedCompanies, type TestCompany } from "@tests/e2e/companies";
 
-// The app shell as it ships (docs/parity/app-shell.md).
+// The app shell as it ships (docs/parity/app-shell.md), signed in to a company.
+
+let company: TestCompany;
+
+test.beforeAll(async () => {
+  company = await createCompanyOnNode({ role: "READ" });
+});
+
+test.beforeEach(async ({ page }) => {
+  await seedCompanies(page, [company]);
+});
 
 test("the shell shows the rail's logo and the header's theme menu", async ({ page }) => {
   await page.goto("/");

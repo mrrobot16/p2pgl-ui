@@ -21,7 +21,9 @@ const sharedConfig = {
   }
 };
 
-const plugins = ["typescript", "typescript-operations", "typed-document-node"];
+// typescript-operations writes the schema types the operations use (enums,
+// inputs, scalars), so the full "typescript" plugin is not needed.
+const plugins = ["typescript-operations", "typed-document-node"];
 
 const config: CodegenConfig = {
   overwrite: true,
