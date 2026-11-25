@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+
 import { APP_ORIGIN, APP_PORT, KIT_ORIGIN, KIT_PORT } from "@tests/e2e/settings";
 
 // Two projects:

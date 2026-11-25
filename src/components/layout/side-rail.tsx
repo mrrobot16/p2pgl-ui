@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { forwardRef, useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
+
 import { CategoryFlyout } from "@/components/layout/category-flyout";
 import {
   APP_CATEGORIES,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "@/app/globals.css";
 import "@/styles/tokens.css";

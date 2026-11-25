@@ -1,5 +1,6 @@
 import { Loader2 } from "lucide-react";
 import type { ButtonHTMLAttributes, ComponentType } from "react";
+
 import { joinClasses } from "@/components/ui/field-styles";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "destructive";

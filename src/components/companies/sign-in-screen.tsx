@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+
 import { AddCompanyForm } from "@/components/companies/add-company-form";
 import { AuthFrame } from "@/components/companies/auth-frame";
 

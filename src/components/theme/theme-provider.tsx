@@ -2,6 +2,7 @@
 
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { ReactNode } from "react";
+
 import { SYSTEM_THEME, THEME_NAMES } from "@/components/theme/themes";
 
 /** Light or dark, following the operating system until the person picks one. */

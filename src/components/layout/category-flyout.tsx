@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+
 import type { AppCategory } from "@/lib/navigation/apps";
 
 type CategoryFlyoutProperties = {

@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useRef, type InputHTMLAttributes } from "react";
+
 import { joinClasses } from "@/components/ui/field-styles";
 
 type CheckboxProperties = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {

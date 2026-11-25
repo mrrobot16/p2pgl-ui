@@ -1,4 +1,5 @@
 import { join, normalize } from "node:path";
+
 import { APP_PORT } from "@tests/e2e/settings";
 
 // Serves the static export (`out/`) the way a static host does: `/reports`

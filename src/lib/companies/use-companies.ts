@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+
 import {
   COMPANY_STORAGE_KEY,
   activeCompany,

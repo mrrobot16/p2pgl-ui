@@ -1,6 +1,6 @@
 ---
 name: code-style
-description: "Use whenever writing, editing, reviewing or refactoring any code in this UI project (components, hooks, utilities, tests, configs). Enforces the project's non-negotiable lint rules: full-word names only (no single-character or abbreviated variables, parameters, functions, types or generics) and absolute imports only (no relative imports)."
+description: "Use whenever writing, editing, reviewing or refactoring any code in this UI project (components, hooks, utilities, tests, configs). Enforces the project's non-negotiable lint rules: full-word names only (no single-character or abbreviated variables, parameters, functions, types or generics), absolute imports only (no relative imports), and package imports first, then a blank line, then the project's own."
 user-invocable: true
 ---
 
@@ -51,6 +51,34 @@ export * from "@/components/Button/types";
 - This applies to every file type that imports project code: components, styles, tests, stories, mocks and dynamic `import()` calls.
 - Package imports (`react`, `next/link`, …) are already absolute and stay as they are.
 
+## Rule 3: Package imports first, then a blank line, then ours
+
+Imports sit in two groups, separated by exactly one blank line:
+
+1. **Packages:** everything installed from npm and Node's own modules: `react`, `next/…`, `lucide-react`, `@playwright/test`, `node:fs`.
+2. **Ours:** everything under the project's aliases: `@/…`, `@tests/…`, `@scripts/…`.
+
+```ts
+// Never
+import type { ReactNode } from "react";
+import { CompanyGate } from "@/components/companies/company-gate";
+import { notFound } from "next/navigation";
+import { AppShell } from "@/components/layout/app-shell";
+
+// Always
+import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
+
+import { CompanyGate } from "@/components/companies/company-gate";
+import { AppShell } from "@/components/layout/app-shell";
+```
+
+- No blank lines inside a group, and no comments between the two groups.
+- Order inside a group is free; it isn't alphabetical.
+- A type import (`import type …`) belongs to the group of where it comes from. Types are not a third group.
+- Stylesheet and other side-effect imports (`import "@/app/globals.css"`) stay in our group, after the named imports. Keep their order: it is the order the styles load in.
+- A file with only one group has no blank line to add.
+
 ## When you edit existing code
 
 If a file you touch already breaks these rules, fix every violation in that file as part of the change, including renames at every reference site. Do not leave a file half-converted.
@@ -61,6 +89,6 @@ Check every file you created or changed:
 
 1. Search for relative import paths: `grep -rnE "from ['\"]\.{1,2}/|import\(['\"]\.{1,2}/|require\(['\"]\.{1,2}/"` over the changed files. The result must be empty.
 2. Read every declaration, parameter, destructuring pattern, callback argument, catch clause and generic parameter you wrote. None may be a single character or an abbreviation.
-3. If the project has ESLint configured, run it and fix what it reports.
+3. Run `bun run lint` and fix what it reports. It enforces rules 1 to 3 (`id-length`, `no-restricted-syntax`, `no-restricted-imports` and `import/order`); `bun run lint --fix` puts the imports in their groups for you.
 
 Only report the work as done once all three checks pass.

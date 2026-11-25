@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
+
 import type { ToastItem, ToastVariant } from "@/components/ui/toast/toast-context";
 
 const VARIANT_ICONS: Record<ToastVariant, typeof CheckCircle2> = {

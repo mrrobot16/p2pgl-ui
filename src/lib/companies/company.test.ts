@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+
 import { companyInputProblems, ledgerNameProblem, makeCompany, nodeUrlProblem } from "@/lib/companies/company";
 
 describe("makeCompany", () => {

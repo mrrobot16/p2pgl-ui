@@ -123,8 +123,9 @@ decisions behind it are in openledger-v2's
 - For local development, gl-node's config needs `cors.allowedOrigins` to
   include `http://localhost:3000`.
 - Code follows the `code-style` skill: full-word names (never single
-  letters or abbreviations, generics included) and absolute imports only
-  (`@/…`, never `./` or `../`).
+  letters or abbreviations, generics included), absolute imports only
+  (`@/…`, never `./` or `../`), and package imports first, then a blank
+  line, then ours (`bun run lint --fix` sorts that out).
 - UI code follows the `performance` skill: little JavaScript, one request
   per screen, cheap renders, instant feedback, no photos or web fonts, and
   measured before it's called done.

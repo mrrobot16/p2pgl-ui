@@ -4,6 +4,7 @@ import { ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+
 import { useStoredFlag } from "@/lib/browser/stored-flag";
 import { APP_CATEGORIES, activeCategoryIdentifier, isCurrentItem, visibleCategories, type AppCategory } from "@/lib/navigation/apps";
 

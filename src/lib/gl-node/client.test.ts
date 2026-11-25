@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+
 import { LedgerHealthDocument } from "@/graphql/generated/ledger";
 import { GlNodeError, ledgerEndpointUrl, nodeEndpointUrl, normalizeNodeUrl, requestGraphql } from "@/lib/gl-node/client";
 

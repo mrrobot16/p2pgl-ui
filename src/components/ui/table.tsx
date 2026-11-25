@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode, TdHTMLAttributes, ThHTMLAttributes } from "react";
+
 import { joinClasses } from "@/components/ui/field-styles";
 
 // Building blocks, not a data-driven table: screens keep their own rows and

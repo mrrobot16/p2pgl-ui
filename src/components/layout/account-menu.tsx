@@ -2,6 +2,7 @@
 
 import { LogOut } from "lucide-react";
 import { useRef, useState } from "react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { forgetAllCompanies, useCompanies } from "@/lib/companies/use-companies";

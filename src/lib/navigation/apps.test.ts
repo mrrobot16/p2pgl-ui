@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Banknote, BookOpen, Building2, Landmark, Receipt } from "lucide-react";
+
 import { activeCategoryIdentifier, isCurrentItem, isRailLinkActive, visibleCategories, type AppCategory } from "@/lib/navigation/apps";
 
 const categories: AppCategory[] = [

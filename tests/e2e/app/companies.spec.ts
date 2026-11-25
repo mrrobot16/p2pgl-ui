@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+
 import { createCompanyOnNode, readStoredCompanies, seedCompanies, uniqueLedgerName, type TestCompany } from "@tests/e2e/companies";
 import { runningGlNode } from "@tests/e2e/settings";
 

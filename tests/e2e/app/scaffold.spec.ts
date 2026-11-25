@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+
 import { runningGlNode } from "@tests/e2e/settings";
 
 // The scaffold's proof: the export is served, and a page on the app's

@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import type { Page } from "@playwright/test";
+
 import { runningGlNode } from "@tests/e2e/settings";
 
 /** What a test needs to reach one company on the test node. */

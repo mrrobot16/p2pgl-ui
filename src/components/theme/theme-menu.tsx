@@ -3,6 +3,7 @@
 import { Check, Palette } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRef, useState, useSyncExternalStore } from "react";
+
 import { THEMES } from "@/components/theme/themes";
 import { useDismiss } from "@/hooks/use-dismiss";
 

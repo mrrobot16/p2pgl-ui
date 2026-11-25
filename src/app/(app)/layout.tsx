@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import { CompanyGate } from "@/components/companies/company-gate";
 import { AppShell } from "@/components/layout/app-shell";
 import { ConfirmDialogHost } from "@/components/ui/confirm-dialog";

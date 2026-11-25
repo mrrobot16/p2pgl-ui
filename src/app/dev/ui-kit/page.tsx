@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+
 import { UiKitShowcase } from "@/components/dev/ui-kit-showcase";
 
 export const metadata = { title: "UI kit" };

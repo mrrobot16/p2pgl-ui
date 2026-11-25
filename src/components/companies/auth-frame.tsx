@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+
 import { ThemeMenu } from "@/components/theme/theme-menu";
 
 type AuthFrameProperties = {

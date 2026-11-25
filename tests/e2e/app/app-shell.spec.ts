@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+
 import { createCompanyOnNode, seedCompanies, type TestCompany } from "@tests/e2e/companies";
 
 // The app shell as it ships (docs/parity/app-shell.md), signed in to a company.

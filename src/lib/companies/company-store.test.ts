@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+
 import { makeCompany } from "@/lib/companies/company";
 import {
   COMPANY_STORAGE_KEY,

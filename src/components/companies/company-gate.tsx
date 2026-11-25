@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
+
 import { useCompanies } from "@/lib/companies/use-companies";
 
 /**

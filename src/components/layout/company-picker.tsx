@@ -2,6 +2,7 @@
 
 import { Building2, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
+
 import { AddCompanyForm } from "@/components/companies/add-company-form";
 import { CreateCompanyForm } from "@/components/companies/create-company-form";
 import { Skeleton } from "@/components/ui/skeleton";
