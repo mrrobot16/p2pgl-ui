@@ -15,9 +15,18 @@ test.beforeEach(async ({ page }) => {
 
 test("the shell shows the rail's logo and the header's theme menu", async ({ page }) => {
   await page.goto("/");
-  await expect(page).toHaveTitle("New GL");
+  await expect(page).toHaveTitle("newGL");
   await expect(page.getByRole("link", { name: "Go to home" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Choose theme" })).toBeVisible();
+});
+
+test("the tab icon is the logo, as SVG", async ({ page, request }) => {
+  await page.goto("/sign-in");
+  const icon = page.locator('link[rel="icon"]');
+  await expect(icon).toHaveAttribute("href", /^\/logo\.svg/);
+  await expect(icon).toHaveAttribute("type", "image/svg+xml");
+  const response = await request.get("/logo.svg");
+  expect(response.ok()).toBe(true);
 });
 
 test("areas that aren't backed yet are not in the navigation", async ({ page }) => {

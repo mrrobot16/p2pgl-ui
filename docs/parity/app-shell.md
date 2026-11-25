@@ -46,13 +46,15 @@ screen shows yet, on the development-only UI kit page `/dev/ui-kit`
 - [x] `p-[6px] pl-0` frame on the accent background; rail on the left;
       header and content on the right; content scrolls, rounded bottom
       corners (`--radius-x-large`)
-- [x] Page title `New GL - <page>`, default `New GL`; description *The GL of
+- [x] Page title `newGL - <page>`, default `newGL` (**changed:** the
+      product is newGL, not the old *New GL*); description *The GL of
       accountants, by accountants, for accountants.*
 
 ## Side rail
 
 - [x] 73px wide, `--color-sidebar-background`; logo (26px, `/logo.svg`,
-      alt *Quickslike logo*) linking to `/`
+      alt *newGL*) linking to `/`. **changed:** the newGL mark, a green
+      circle with an N
 - [x] Square items: 72px tall, 24px icon in a 36px shell, 11px label;
       hover and active shell filled with the nav colour
 - [ ] Reports (`BookOpen`), active on `/reports…`: **step 4**

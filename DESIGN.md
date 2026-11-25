@@ -1,5 +1,5 @@
 ---
-name: New GL (quickslike)
+name: newGL
 description: A QuickBooks-familiar accounting workspace over a plain-text ledger you fully own
 colors:
   action-primary: "#00892E"
@@ -51,13 +51,13 @@ components:
     padding: "24px"
 ---
 
-# Design System: New GL (quickslike)
+# Design System: newGL
 
 ## Overview
 
 **Creative North Star: "QBO-Familiar, Plain-Text-Honest"**
 
-New GL deliberately mirrors QuickBooks Online's professional-SaaS visual
+newGL deliberately mirrors QuickBooks Online's professional-SaaS visual
 language -- Intuit's own brand green, its `Avenir Next forINTUIT` font
 stack, and its rounded-pill button shape -- so a small-business owner who
 has ever touched QuickBooks feels instantly oriented on day one. The design

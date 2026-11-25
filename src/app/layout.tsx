@@ -7,10 +7,12 @@ import "@/styles/shell.css";
 
 export const metadata: Metadata = {
   title: {
-    template: "New GL - %s",
-    default: "New GL"
+    template: "newGL - %s",
+    default: "newGL"
   },
-  description: "The GL of accountants, by accountants, for accountants."
+  description: "The GL of accountants, by accountants, for accountants.",
+  // The tab icon is the logo itself, one file for both (images are SVG only).
+  icons: { icon: { url: "/logo.svg", type: "image/svg+xml" } }
 };
 
 type RootLayoutProperties = Readonly<{

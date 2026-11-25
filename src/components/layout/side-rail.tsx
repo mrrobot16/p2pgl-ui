@@ -124,7 +124,7 @@ export function SideRail({ links = RAIL_LINKS, categories = APP_CATEGORIES, sett
     <aside className="side-nav relative flex h-full w-[73px] shrink-0 flex-col justify-between bg-[var(--color-sidebar-background)]">
       <div className="flex flex-col">
         <Link href={LOGO_HREF} className="mx-[4px] flex h-[72px] items-center justify-center" aria-label="Go to home">
-          <Image src="/logo.svg" alt="Quickslike logo" width={26} height={26} priority />
+          <Image src="/logo.svg" alt="newGL" width={26} height={26} priority />
         </Link>
 
         <nav aria-label="Main" className="mx-[4px] flex flex-col">

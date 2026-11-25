@@ -30,10 +30,10 @@ Code: `src/lib/companies/` (the company, its store, sign-in, create),
 - [x] The old auth layout: left half the brand panel (*Double-entry, done
       right*, *Every transaction, perfectly balanced.*, *The GL of
       accountants, by accountants, for accountants.*), hidden below `lg`;
-      right half the logo (green and white by theme, 120px), the form
-      centred, theme menu bottom right. **changed:** no photo (maintainer,
-      2026-11-24: keep it simple); the panel's text sits on the brand's dark
-      green
+      right half the form centred, theme menu bottom right. **changed:** no
+      photo (maintainer, 2026-11-24: keep it simple) and no wordmark above
+      the form (the old *Simple* logo is not the brand; maintainer,
+      2026-11-25); the panel's text sits on the brand's dark green
 - [x] Heading *Welcome back*, line *Sign in to your books.*
 - [x] **changed:** fields are *Node URL*, *Company* (ledger name) and *Key*
       instead of email and password; *Sign in*, *Signing in…*. The form

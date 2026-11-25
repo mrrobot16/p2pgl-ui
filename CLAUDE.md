@@ -32,10 +32,15 @@ decisions behind it are in openledger-v2's
   header, company picker, apps flyout), page headers, tables, forms, modals,
   drawers, buttons, badges, toasts, spacing, typography, colours, icons
   (lucide-react), the light and dark themes (the old app's other three
-  skins are dropped), the font stack and the name. Design work uses the
-  impeccable skill as a refinement that preserves the old look,
-  never a redesign. Don't change visual language, layout or copy unless the
-  maintainer asks.
+  skins are dropped) and the font stack. Design work uses the impeccable
+  skill as a refinement that preserves the old look, never a redesign.
+  Don't change visual language, layout or copy unless the maintainer asks.
+- **The product is newGL**, written exactly so: page titles, alt text,
+  copy. Not the old app's *New GL*, *quickslike* or *Simple*. The logo is
+  `public/logo.svg`, the newGL mark.
+- **Images are SVG only**, clean and small (the performance skill, section
+  5), enforced by `scripts/svg-only.test.ts` and a lint rule. No raster
+  image is ever added without the maintainer's yes.
 - **`all-apps` is `app` here:** anything the old app named `all-apps` is
   `app` in this repo. Routes: `/app/banking`,
   `/app/chart-of-accounts`, and `/app` alone goes to the first page listed.

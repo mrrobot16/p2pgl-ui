@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ThemeMenu } from "@/components/theme/theme-menu";
@@ -11,9 +10,9 @@ type AuthFrameProperties = {
 
 /**
  * The sign-in pages' frame, as in the old app: the brand panel on the left
- * (large screens only), the logo and the form on the right, the theme menu
- * in the bottom right corner. No photo (the maintainer's call): the panel's
- * text sits on the brand's dark green.
+ * (large screens only), the form on the right, the theme menu in the bottom
+ * right corner. No photo and no wordmark (the maintainer's call): the
+ * panel's text sits on the brand's dark green.
  */
 export function AuthFrame({ children, footer }: AuthFrameProperties) {
   return (
@@ -27,11 +26,6 @@ export function AuthFrame({ children, footer }: AuthFrameProperties) {
       </div>
 
       <div className="flex flex-1 flex-col items-center px-6 py-10 text-center">
-        <div>
-          <Image className="hidden dark:block" style={{ width: 120, height: "auto" }} src="/logo-simple-white.png" alt="Simple" width={120} height={39} priority />
-          <Image className="block dark:hidden" style={{ width: 120, height: "auto" }} src="/logo-simple-green.png" alt="Simple" width={120} height={39} priority />
-        </div>
-
         <div className="flex w-full flex-1 flex-col items-center justify-center">
           <div className="w-full max-w-sm">{children}</div>
         </div>

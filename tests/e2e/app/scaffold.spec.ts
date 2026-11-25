@@ -6,7 +6,7 @@ import { runningGlNode } from "@tests/e2e/settings";
 
 test("the exported app is served with its name", async ({ page }) => {
   await page.goto("/sign-in");
-  await expect(page).toHaveTitle("New GL - Sign in");
+  await expect(page).toHaveTitle("newGL - Sign in");
 });
 
 test("a page on the app's origin can call gl-node with a key", async ({ page }) => {

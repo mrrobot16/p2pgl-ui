@@ -13,8 +13,9 @@ A new web app, written from scratch, with the old app's features and its
 UI/UX unchanged, so that someone who used the old app would not notice the
 backend changed. The old app (`.do_not_commit_ignore/newgl-ui`, read-only)
 is the reference for every screen: its layout, copy, colours, themes, font
-stack, icons and name (*New GL*). The backend is gl-node's GraphQL API; this
-repo never edits openledger-v2.
+stack and icons. The product's name is **newGL** (maintainer, 2026-11-25;
+the old app said *New GL*). The backend is gl-node's GraphQL API; this repo
+never edits openledger-v2.
 
 ## Architecture
 

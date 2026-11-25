@@ -45,7 +45,9 @@ The backend's speed is gl-node's work. These rules cover what the browser does: 
 
 ## 5. Keep assets small and simple
 
-- **No photos or decorative images.** The sign-in photo was removed for this reason. Ask the maintainer before adding any raster image.
+- **Images are SVG only.** No PNG, JPEG, GIF, WebP, AVIF, ICO or any other raster format, anywhere in the app's files or named in its code. No photos or decorative images (the sign-in photo was removed for this reason).
+- **SVGs are clean and small:** at most 10 KB; no embedded raster image (`data:image/…`, `<image>`), no `<script>`, no `<foreignObject>`, no `on…=` handlers; text converted to outlines (paths), never live `<text>`, which draws with whatever font the machine has. Prefer marks drawn in `currentColor`, so one file serves light and dark. A mark on every page is best built into the page as a component (no request); strip editor class names and ids (`.cls-1`, `Layer_1`) first, or they leak into the page.
+- **Enforced:** `scripts/svg-only.test.ts` (files on disk, part of `bun run test`) and a lint rule against naming a raster file in code. The only exceptions would be an Apple home-screen icon or social link previews, which need PNG, and only with the maintainer's yes.
 - **Icons are SVG:** lucide-react, or an authored SVG.
 - **No web fonts.** The font stack uses fonts already on the machine (DESIGN.md).
 - **No third-party scripts** besides Plaid Link, which loads only when used.
