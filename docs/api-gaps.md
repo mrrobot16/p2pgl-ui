@@ -34,7 +34,7 @@ Already planned in 011 (listed so the screens can point at them):
 
 | Need | Screens waiting | 011 unit |
 |---|---|---|
-| `me`: the caller's name and role, the ledger's label. *Schema decided 2026-11-25:* `me: Me!` (`ledger`, `label`, `role: CallerRole`, `userId`, `name`, `expires`, `allowedFields`), `setLabel(label)`, `LedgerInfo.label`, `addLedger(…, label)`; built once unit 2 ships | Top header (name, avatar), company picker label, report headers, hiding what a key's role cannot do | 2 |
+| `me`: the caller's name and role, the ledger's label. *Schema decided 2026-11-25:* `me: Me!` (`ledger`, `label`, `role: CallerRole`, `userId`, `name`, `expires`, `allowedFields`), `setLabel(label)`, `LedgerInfo.label`, `addLedger(…, label)`; `allowedFields` also leaves out the bank fields where the server doesn't hold the bank feed, and the sandbox tools where Plaid isn't in sandbox (answers recorded in `docs/plan.md`, *`me`*); built once unit 2 ships | Top header (name, avatar), company picker label, report headers, hiding what a key's role cannot do | 2 |
 | Account metadata: category (13), detail type, code, display name | Chart of accounts (Account type, Detail type, filters, sorting by type); Balance Sheet's Bank Accounts / Other Current Assets / Fixed Assets sections; which accounts are bank and credit-card accounts | 3 |
 | Entry metadata: reference number, type | Report drill-down's Ref # column; Posted tab's "Expense 11/20/2026" link text | 4 |
 | `register` | Chart of accounts' View register; bank transactions' Go to bank register; Posted tab's link | 6 |

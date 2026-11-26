@@ -103,6 +103,10 @@ One place turns gl-node's answers into what the screen shows:
 - **HTTP 429** (`RATE_LIMITED`, 60 GraphQL requests a minute per address,
   counted separately for each company and for the node endpoint):
   "Too many requests, try again in a moment"; back off, never poll fast.
+- **`PLAID_NOT_ENABLED`:** this server doesn't hold the company's bank
+  feed (Plaid is set per company per server). Until `me` hides the bank
+  screens there, it reads: *This server doesn't hold this company's bank
+  feed.*
 - **With the operator key only:** HTTP 404 `NO_SUCH_LEDGER` (no company by
   that name) and HTTP 503 `LEDGER_NOT_SERVED` (the company exists but failed
   to start), each with its own plain message.
@@ -117,6 +121,43 @@ screen is shown; an action the key's role doesn't allow comes back
 `FORBIDDEN`, nothing runs, and the screen says "Your key can't do this"
 where it happened. When gl-node ships `me`, screens start hiding what a
 role can't do.
+
+## `me` (gl-node unit 2: decided, built once it ships)
+
+`me: Me!` answers any key: `ledger`, `label`, `role` (`READ`, `WRITE`,
+`ADMIN`, `OPERATOR`), `userId` and `name` (none for the operator key),
+`expires`, and `allowedFields`. Answered by the gl-node session on
+2026-11-25:
+
+- **Fetched once per company per tab:** at sign-in (in place of `health`)
+  and on switching, and kept. At sign-in it goes alone. Later it may share
+  a screen's first request, but only with fields `allowedFields` lists:
+  the role check covers the whole request before anything runs, so one
+  unlisted field makes the whole request `FORBIDDEN`, `me` included.
+- **`allowedFields` decides what shows:** anything not listed is hidden.
+  It lists bare root field names, unique across queries and mutations (a
+  gl-node test keeps them so). It leaves out what the role forbids, and
+  also what this server's settings refuse:
+  - the bank fields appear only on the server that holds the company's
+    bank feed (Plaid is set per company per server; the others answer
+    `PLAID_NOT_ENABLED`), so the same key can see the bank screens on one
+    server and not another;
+  - the sandbox tools appear only where that Plaid is in sandbox (never
+    decided from the UI's own environment);
+  - on a local node with auth off, the people fields are left out.
+
+  A listed field can still fail on its arguments or on Plaid itself (a
+  bank needing a new login), so those errors are still handled.
+- **`label`** is the company's display name, a record in its books (the
+  latest wins on every server). The picker and report headers show it,
+  or the name as typed until one is set. `setLabel` (admin or operator;
+  1 to 100 characters) sits in Settings, *Company name*; `addLedger(…,
+  label)` lets create company ask for a business name first.
+- **`name`** fills the account menu and the avatar's initials;
+  *Operator* for the operator key.
+- **`expires`** is the last day the key works, in UTC: it stops at 00:00
+  UTC the next day. The account menu says *works until Dec 31*, and may
+  add the local time of that 00:00 UTC.
 
 ## Navigation in the first stage
 
@@ -172,8 +213,10 @@ end of each step, and commit only when the maintainer says so.
 8. **Banks** (`docs/parity/banks.md`, admin). Connected banks, Plaid Link
    (`createPlaidLinkToken`, `connectBank`), mapping accounts, refresh,
    fetch, sync, disconnect, webhooks. The sandbox tools
-   (`connectSandboxBank`, `fireSandboxWebhook`, `resetSandboxLogin`) only
-   in environments whose settings allow them.
+   (`connectSandboxBank`, `fireSandboxWebhook`, `resetSandboxLogin`) wait
+   for `me`: only `allowedFields` can say a server's Plaid is in sandbox.
+   Until `me` ships, a server without the company's bank feed answers
+   `PLAID_NOT_ENABLED`, shown in plain words where it happens.
 9. **People** (`docs/parity/people.md`, admin). `accessList`,
    `grantAccess` (the new key shown once, with a copy button and a line
    saying it can't be shown again), `revokeAccess`, `renameUser`.
