@@ -9,8 +9,9 @@ import { normalizeNodeUrl } from "@/lib/gl-node/client";
 /** `checking` while the answer for the current address is on its way, or the address isn't complete yet. */
 export type NodeEndpointState = NodeEndpointAvailability | "checking";
 
-// Wait for typing to stop before asking (the node allows 60 requests a
-// minute per address); a node chosen from the list is asked at once.
+// Wait for typing to stop before asking (the node endpoint allows 60
+// requests a minute per address); a node chosen from the list is asked
+// after the same short pause.
 const TYPING_PAUSE_MILLISECONDS = 500;
 
 /** Whether the node at `nodeUrl` takes new companies from the browser (src/lib/companies/node-endpoint.ts). */

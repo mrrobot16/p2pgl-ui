@@ -73,7 +73,10 @@ decisions behind it are in openledger-v2's
   even to guess a key's role: every screen shows, and `FORBIDDEN` says
   "Your key can't do this" where it happens). What's missing goes in
   `docs/api-gaps.md` as *blocked: needs endpoint X*, or *needs a
-  decision* for anything that changes existing rows.
+  decision* for anything that changes existing rows. Choosing among the
+  rows the node returns, or calling an endpoint several times, is fine;
+  computing what the node should compute (balances, totals across pages)
+  or showing something missing as if it were finished is not.
 - **The GraphQL client is generated** from the two schema files; plain
   `fetch`, no Apollo or urql.
 
@@ -111,7 +114,10 @@ decisions behind it are in openledger-v2's
   browser (a static export only passes `NEXT_PUBLIC_` variables to the
   page, fixed at build time). Both are set in `.env` locally (see
   `.env.example`) and in the Vercel project's settings for each deployed
-  environment.
+  environment. Each deployed environment needs one fixed domain: a node's
+  `cors.allowedOrigins` takes exact origins only (no `*`, no patterns), so
+  Vercel's per-deployment preview URLs can't sign in. The three exact
+  origins (`https://<domain>`) go to the maintainer, for every node.
 - **The build checks them:** `next.config.ts` stops `bun run dev` and `bun
   run build` if either is missing, unknown, or they differ.
 - **Behaviour per environment lives in one table**,

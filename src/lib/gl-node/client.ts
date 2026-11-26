@@ -16,7 +16,8 @@ export type GlNodeEndpoint = {
  *   Browsers do not tell these apart.
  * - `httpStatus`: any other non-success HTTP status.
  * - `rateLimited`: too many requests from this address (HTTP 429, `RATE_LIMITED`);
- *   gl-node allows 60 GraphQL requests a minute per client address.
+ *   gl-node allows 60 GraphQL requests a minute per client address, counted
+ *   separately for each company and for the node endpoint.
  * - `graphql`: the node answered with a GraphQL error (`code` when it gave one).
  * - `invalidResponse`: the answer was not GraphQL's JSON shape.
  */

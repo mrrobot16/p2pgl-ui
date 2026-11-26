@@ -14,10 +14,14 @@ describe("the environments", () => {
     expect(Object.keys(ENVIRONMENT_SETTINGS).sort()).toEqual([...APP_ENVIRONMENTS].sort());
   });
 
-  test("development offers every known node, local first; the others offer none yet", () => {
+  test("development offers every known node, local first", () => {
     expect(ENVIRONMENT_SETTINGS.development.defaultNodes).toEqual([LEDGER_LOCAL_NODE, LEDGER_ONE_NODE, LEDGER_TWO_NODE, LEDGER_ROGUEONE_NODE]);
+  });
+
+  test("preview, staging and production offer the three deployed nodes, never this machine's", () => {
     for (const environment of ["preview", "staging", "production"] as const) {
-      expect(ENVIRONMENT_SETTINGS[environment].defaultNodes).toEqual([]);
+      expect(ENVIRONMENT_SETTINGS[environment].defaultNodes).toEqual([LEDGER_ONE_NODE, LEDGER_TWO_NODE, LEDGER_ROGUEONE_NODE]);
+      expect(ENVIRONMENT_SETTINGS[environment].defaultNodes).not.toContain(LEDGER_LOCAL_NODE);
     }
   });
 

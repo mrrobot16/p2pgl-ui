@@ -100,7 +100,8 @@ One place turns gl-node's answers into what the screen shows:
 - **Network failure** (node down, CORS refused, a plain-HTTP node from an
   HTTPS page): "Can't reach <node>". With a hint to check the node's
   `cors.allowedOrigins` when the browser reports a CORS failure.
-- **HTTP 429** (`RATE_LIMITED`, 60 GraphQL requests a minute per address):
+- **HTTP 429** (`RATE_LIMITED`, 60 GraphQL requests a minute per address,
+  counted separately for each company and for the node endpoint):
   "Too many requests, try again in a moment"; back off, never poll fast.
 - **With the operator key only:** HTTP 404 `NO_SUCH_LEDGER` (no company by
   that name) and HTTP 503 `LEDGER_NOT_SERVED` (the company exists but failed
@@ -239,11 +240,13 @@ The frontend rules are the `performance` skill. Two of them are built in
   `ledger.json` names), start gl-node again, and it adopts and signs them
   at boot. One `trialBalance` then checks the counts and totals. The large
   test ledger is written once and copied for each run.
-- **The 60-a-minute limit is shared by the whole run:** gl-node counts
-  GraphQL requests per client address, every Playwright worker is
-  127.0.0.1, and the limit can't be changed. Tests make few requests each,
-  create companies sparingly (two requests each), and, if the run grows
-  past the limit, each worker gets its own gl-node. A rate-limit refusal
+- **The 60-a-minute limit is shared by the whole run, per company:**
+  gl-node counts GraphQL requests per client address and per company
+  (each `/ledgers/<name>/graphql`, and `/node/graphql`, has its own
+  count), every Playwright worker is 127.0.0.1, and the limit can't be
+  changed. Tests that share a company share its 60; tests mostly make
+  their own company, and creating one costs one request on the node
+  endpoint. If a run outgrows that, each worker gets its own gl-node. A rate-limit refusal
   in a test is a test-design problem, not a UI bug, and is reported as
   such.
 - **Plaid** flows run in Plaid's sandbox when the gl-node under test has

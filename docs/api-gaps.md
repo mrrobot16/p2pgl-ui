@@ -34,7 +34,7 @@ Already planned in 011 (listed so the screens can point at them):
 
 | Need | Screens waiting | 011 unit |
 |---|---|---|
-| `me`: the caller's name and role, the ledger's label | Top header (name, avatar), company picker label, report headers, hiding what a key's role cannot do | 2 |
+| `me`: the caller's name and role, the ledger's label. *Schema decided 2026-11-25:* `me: Me!` (`ledger`, `label`, `role: CallerRole`, `userId`, `name`, `expires`, `allowedFields`), `setLabel(label)`, `LedgerInfo.label`, `addLedger(…, label)`; built once unit 2 ships | Top header (name, avatar), company picker label, report headers, hiding what a key's role cannot do | 2 |
 | Account metadata: category (13), detail type, code, display name | Chart of accounts (Account type, Detail type, filters, sorting by type); Balance Sheet's Bank Accounts / Other Current Assets / Fixed Assets sections; which accounts are bank and credit-card accounts | 3 |
 | Entry metadata: reference number, type | Report drill-down's Ref # column; Posted tab's "Expense 11/20/2026" link text | 4 |
 | `register` | Chart of accounts' View register; bank transactions' Go to bank register; Posted tab's link | 6 |
@@ -67,8 +67,11 @@ Not in 011's plan yet:
 5. **Booked bank transactions of an account.** The Posted tab lists what was
    booked from the feed for one account. Today that is `journal(account)`
    filtered in the browser by a `^plaid-…` link, a page of 100 at a time.
-   Fine to start; a filter on links (`journal(link: "plaid-")`) would avoid
-   paging through hand entries.
+   *Allowed (gl-node session, 2026-11-25):* the link is documented
+   bank-feed data, so choosing rows by it is fine; page with *Load more*,
+   and never show a count or total built from the rows loaded so far. A
+   filter on links (`journal(link: "plaid-")`) would avoid paging through
+   hand entries.
 6. **A ledger created ready for people's keys.** Creating a company calls
    `addLedger`, then `grantAccess` on the new ledger. `grantAccess` needs a
    ledger that signs, and `addLedger(name)` with no settings makes one with
@@ -83,21 +86,26 @@ Not in 011's plan yet:
 7. **Report columns in one request.** The old reports show a column per
    week, month, quarter or year, or a comparison with another period. The
    UI can ask for one report per column, about seven per request under the
-   query-cost limit. Fine to start; `incomeStatement` taking a list of
-   periods would make a twelve-month report one call.
+   query-cost limit. *Allowed (gl-node session, 2026-11-25):* every number
+   still comes from the node; keep within 7 heavy fields a request and the
+   rate limit. `incomeStatement` taking a list of periods would make a
+   twelve-month report one call.
 8. **The browser remembering CORS permission.** gl-node's CORS layer
    (`config.rs`, `cors_layer()`) sends no `Access-Control-Max-Age`, so
    Chrome repeats the permission check (preflight) every 5 seconds and most
    calls cost two round trips. Wanted: `.max_age(…)`, up to 2 hours.
-   *Noted 2026-11-24:* a small gl-node change, after the current rename
-   unit.
+   *Planned, gl-node unit 2:* preflight answers carry
+   `Access-Control-Max-Age: 7200` (two hours, Chromium's most).
 
 9. **The GraphQL rate limit is low for a UI, and per address.** gl-node
-   allows 60 GraphQL requests a minute per client address
+   allows 60 GraphQL requests a minute per client address, counted
+   separately for each company and for the node endpoint
    (`GRAPHQL_RATE_LIMIT` in `rate_limit.rs`, not configurable). One person
    clicking through screens, opening drill-downs and refreshing cached
    data can reach it; and an office behind one public address, several
-   accountants together, shares the 60. A refusal looks to the person like
+   accountants together, shares the 60. *Planned, gl-node unit 2c (after
+   2b):* a request with a valid key counts against that key; requests
+   without one stay counted per address. A refusal looks to the person like
    a broken screen. Wanted: a limit per key rather than per address for
    authenticated requests, or a higher or configurable one. Until then the
    UI keeps to one request per screen, caches answers, and never fetches

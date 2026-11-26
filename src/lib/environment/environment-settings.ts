@@ -1,5 +1,5 @@
 import type { AppEnvironment } from "@/lib/environment/app-environment";
-import { ALL_DEFAULT_NODES, type DefaultNode } from "@/lib/environment/default-nodes";
+import { ALL_DEFAULT_NODES, DEPLOYED_NODES, type DefaultNode } from "@/lib/environment/default-nodes";
 
 export type EnvironmentSettings = {
   /** Offered first on sign-in and create company. Empty: the plain Node URL field. */
@@ -12,9 +12,9 @@ export type EnvironmentSettings = {
  * name. The nodes themselves are in src/lib/environment/default-nodes.ts.
  */
 export const ENVIRONMENT_SETTINGS: Record<AppEnvironment, EnvironmentSettings> = {
+  // This machine's node only makes sense in development.
   development: { defaultNodes: ALL_DEFAULT_NODES },
-  // No nodes chosen for these yet: they show the plain Node URL field.
-  preview: { defaultNodes: [] },
-  staging: { defaultNodes: [] },
-  production: { defaultNodes: [] }
+  preview: { defaultNodes: DEPLOYED_NODES },
+  staging: { defaultNodes: DEPLOYED_NODES },
+  production: { defaultNodes: DEPLOYED_NODES }
 };

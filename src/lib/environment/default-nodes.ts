@@ -18,5 +18,8 @@ export const LEDGER_TWO_NODE: DefaultNode = { label: "Ledger TWO node", url: "ht
 
 export const LEDGER_ROGUEONE_NODE: DefaultNode = { label: "Ledger ROGUEONE node", url: "https://ledger-node-rogueone.p2pgl.com" };
 
-/** Every known node, in the order the chooser lists them. */
-export const ALL_DEFAULT_NODES: readonly DefaultNode[] = [LEDGER_LOCAL_NODE, LEDGER_ONE_NODE, LEDGER_TWO_NODE, LEDGER_ROGUEONE_NODE];
+/** The deployed nodes (the maintainer's, gl-node 0.5.0), in the order the chooser lists them. */
+export const DEPLOYED_NODES: readonly DefaultNode[] = [LEDGER_ONE_NODE, LEDGER_TWO_NODE, LEDGER_ROGUEONE_NODE];
+
+/** Every known node, in the order the chooser lists them: this machine's first. */
+export const ALL_DEFAULT_NODES: readonly DefaultNode[] = [LEDGER_LOCAL_NODE, ...DEPLOYED_NODES];

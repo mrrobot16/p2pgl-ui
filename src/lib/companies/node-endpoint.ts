@@ -16,8 +16,8 @@ export type NodeEndpointAvailability = "available" | "closed" | "unreachable";
 const CHECK_TIMEOUT_MILLISECONDS = 5000;
 
 // Remembered per node for the life of the page: at most two requests a node
-// (the node allows 60 a minute per address). `unreachable` isn't kept, so a
-// node that starts later is found on the next check.
+// (the node endpoint allows 60 a minute per address). `unreachable` isn't
+// kept, so a node that starts later is found on the next check.
 const remembered = new Map<string, Promise<NodeEndpointAvailability>>();
 
 function isGraphqlAnswer(payload: unknown): boolean {
