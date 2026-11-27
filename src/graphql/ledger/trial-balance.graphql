@@ -1,0 +1,16 @@
+# The Trial Balance screen: every account with a balance on a date, as
+# debit or credit, and gl-node's two totals. `exact` decides whether the
+# screen may add rows up into section totals (docs/plan.md, Report totals).
+query TrialBalance($at: Date!) {
+  trialBalance(at: $at) {
+    at
+    totalDebit
+    totalCredit
+    exact
+    rows {
+      account
+      debit
+      credit
+    }
+  }
+}

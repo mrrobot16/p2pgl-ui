@@ -310,8 +310,11 @@ The frontend rules are the `performance` skill. Two of them are built in
   transactions (no `openledger-*` metadata; every account opened on or
   before its first use) to the ledger's `.bean` (the `ledgerPath` its
   `ledger.json` names), start gl-node again, and it adopts and signs them
-  at boot. One `trialBalance` then checks the counts and totals. The large
-  test ledger is written once and copied for each run.
+  at boot. One `trialBalance` then checks the counts and totals. The
+  global setup does this before any test runs (`tests/e2e/seeded-books.ts`,
+  the harness's `restart`): `seeded-small`, with known figures, and
+  `seeded-large`, 10,000 generated entries for the speed budgets (written
+  fresh each run). Each has a READ key.
 - **The 60-a-minute limit is shared by the whole run, per company:**
   gl-node counts GraphQL requests per client address and per company
   (each `/ledgers/<name>/graphql`, and `/node/graphql`, has its own

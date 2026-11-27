@@ -18,6 +18,13 @@ export type RunningGlNode = {
   url: string;
   operatorKey: string;
   dataDirectory: string;
+  /**
+   * Stops the node, runs `whileStopped` (hand-written entries go into a
+   * ledger's `.bean` here), and starts it again on the same folder and
+   * port; it adopts and signs those entries at boot.
+   */
+  restart: (whileStopped: () => Promise<void>) => Promise<void>;
+  /** Stops the node and deletes its folder. */
   stop: () => Promise<void>;
 };
 
@@ -85,43 +92,59 @@ export async function startGlNode(options: { allowedOrigins: string[] }): Promis
   const configurationPath = join(dataDirectory, "gl-node.config.json");
   await writeFile(configurationPath, JSON.stringify(configuration, null, 2));
 
-  // The key comes from the config file only: an operator key in the
-  // caller's environment would override it.
-  const environment: NodeJS.ProcessEnv = { ...process.env, GL_NODE_CONFIG: configurationPath };
-  delete environment.GL_NODE_API_KEY;
-
-  let collectedOutput = "";
-  const child = spawn(binary, [], {
-    cwd: dataDirectory,
-    env: environment,
-    stdio: ["ignore", "pipe", "pipe"]
-  });
-  child.stdout?.on("data", (chunk: Buffer) => {
-    collectedOutput += chunk.toString();
-  });
-  child.stderr?.on("data", (chunk: Buffer) => {
-    collectedOutput += chunk.toString();
-  });
-
   const url = `http://127.0.0.1:${port}`;
+  let child: ChildProcess | null = null;
+  let collectedOutput = "";
+
+  async function launch(): Promise<void> {
+    // The key comes from the config file only: an operator key in the
+    // caller's environment would override it.
+    const environment: NodeJS.ProcessEnv = { ...process.env, GL_NODE_CONFIG: configurationPath };
+    delete environment.GL_NODE_API_KEY;
+    collectedOutput = "";
+    const started = spawn(binary, [], { cwd: dataDirectory, env: environment, stdio: ["ignore", "pipe", "pipe"] });
+    started.stdout?.on("data", (chunk: Buffer) => {
+      collectedOutput += chunk.toString();
+    });
+    started.stderr?.on("data", (chunk: Buffer) => {
+      collectedOutput += chunk.toString();
+    });
+    child = started;
+    await waitForHealth(url, started, () => collectedOutput);
+  }
+
+  async function stopProcess(): Promise<void> {
+    const running = child;
+    if (running === null || running.exitCode !== null) return;
+    const exited = new Promise<void>((resolveExit) => running.once("exit", () => resolveExit()));
+    running.kill("SIGTERM");
+    const forced = setTimeout(() => running.kill("SIGKILL"), 10_000);
+    await exited;
+    clearTimeout(forced);
+  }
 
   async function stop(): Promise<void> {
-    if (child.exitCode === null) {
-      const exited = new Promise<void>((resolveExit) => child.once("exit", () => resolveExit()));
-      child.kill("SIGTERM");
-      const forced = setTimeout(() => child.kill("SIGKILL"), 10_000);
-      await exited;
-      clearTimeout(forced);
-    }
+    await stopProcess();
     await rm(dataDirectory, { recursive: true, force: true });
   }
 
+  async function restart(whileStopped: () => Promise<void>): Promise<void> {
+    await stopProcess();
+    await whileStopped();
+    try {
+      await launch();
+    } catch (error) {
+      await stop();
+      throw error;
+    }
+  }
+
   try {
-    await waitForHealth(url, child, () => collectedOutput);
+    await launch();
   } catch (error) {
     await stop();
     throw error;
   }
 
-  return { url, operatorKey, dataDirectory, stop };
+  return { url, operatorKey, dataDirectory, restart, stop };
 }

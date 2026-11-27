@@ -124,5 +124,13 @@ Not in 011's plan yet:
     then the Balance Sheet shows one *Net Income* row, marked as a change
     from QuickBooks.
 
+11. **The trial balance per currency.** `trialBalance` adds every currency
+    of an account into one `debit` or `credit` figure with no currency
+    named (`read_model.rs`, `trial_balance_checked`, which calls it a
+    simplification), so 10 USD and 5 EUR show as 15. The UI shows the
+    figures without a currency sign. Wanted: each row's `debit` and
+    `credit` as `[Amount!]!`, and the totals per currency, as the balance
+    sheet and income statement already do.
+
 Until an item lands, its part of the UI stays out (no stubs) or uses the
 slower fallback named above (openledger-v2 session, 2026-11-24).

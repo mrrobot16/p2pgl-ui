@@ -59,7 +59,7 @@ The React Compiler is on (`next.config.ts`): don't add `useMemo`, `useCallback` 
 The budgets are tests. Before you call a screen done:
 
 1. `bun run build`, then `bun run budget`: every page's first-load JavaScript is at most 250 KB gzipped (`scripts/check-bundle-budget.ts`).
-2. Add the screen to `SCREENS` in `tests/e2e/app/budgets.spec.ts` and run `bun run test:e2e`: at most one request to gl-node on opening, content within 2 s, LCP (largest paint) within 1.5 s, CLS (layout shift) within 0.05. A data screen opens on the large test ledger.
+2. Add the screen to `SCREENS` in `tests/e2e/app/budgets.spec.ts` and run `bun run test:e2e`: at most one request to gl-node on opening, content within 2 s, LCP (largest paint) within 1.5 s, CLS (layout shift) within 0.05. A data screen opens on the large test ledger (`largeBooks: true`, the `seeded-large` company).
 3. Check by hand that typing in the screen's search and changing its filters stays responsive (INP under 200 ms) on the large test ledger.
 4. For a heavy interaction (reports with many columns, the register), record it in React's Profiler and fix any render that takes more than one frame (16 ms) on its own.
 

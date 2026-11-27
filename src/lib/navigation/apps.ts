@@ -1,4 +1,4 @@
-import { Landmark, type LucideIcon } from "lucide-react";
+import { BookOpen, Landmark, type LucideIcon } from "lucide-react";
 
 /** A rail item that is a plain link (Home, Reports, Settings in the old app). */
 export type RailLink = {
@@ -12,10 +12,9 @@ export type RailLink = {
 
 /**
  * The rail's plain links above the categories, only those that are backed.
- * Home is hidden until its dashboard is backed (docs/plan.md, question 2);
- * Reports arrives with step 4.
+ * Home is hidden until its dashboard is backed (docs/plan.md, question 2).
  */
-export const RAIL_LINKS: RailLink[] = [];
+export const RAIL_LINKS: RailLink[] = [{ identifier: "reports", label: "Reports", href: "/reports", icon: BookOpen, activePathPrefix: "/reports" }];
 
 /** The bottom-pinned Settings link; none until a settings page is backed. */
 export const SETTINGS_LINK: RailLink | null = null;

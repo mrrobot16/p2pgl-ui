@@ -30,10 +30,11 @@ test("the tab icon is the logo, as SVG", async ({ page, request }) => {
   expect(response.ok()).toBe(true);
 });
 
-test("areas that aren't backed yet are not in the navigation", async ({ page }) => {
+test("only backed areas are in the navigation: Reports, and nothing not yet built", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("link", { name: "Go to home" })).toBeVisible();
-  for (const label of ["Home", "Reports", "Accounting", "Expenses", "Sales", "More apps", "Settings"]) {
+  await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Reports", exact: true })).toBeVisible();
+  for (const label of ["Home", "Accounting", "Expenses", "Sales", "More apps", "Settings"]) {
     await expect(page.getByRole("link", { name: label, exact: true })).toHaveCount(0);
   }
 });

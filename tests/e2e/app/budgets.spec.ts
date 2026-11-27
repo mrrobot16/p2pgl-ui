@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { createCompanyOnNode, seedCompanies, type TestCompany } from "@tests/e2e/companies";
+import { seededCompany } from "@tests/e2e/seeded-books";
 import { runningGlNode } from "@tests/e2e/settings";
 
 // The performance budgets (the performance skill, section 6), per screen:
@@ -23,6 +24,8 @@ type Screen = {
   /** Visible once the screen shows its content. */
   ready: (page: Page) => Locator;
   maximumGlNodeRequests: number;
+  /** A data screen opens on the large seeded company (10,000 entries); others on an empty one. */
+  largeBooks?: boolean;
 };
 
 const SCREENS: Screen[] = [
@@ -39,6 +42,21 @@ const SCREENS: Screen[] = [
     path: "/",
     signedIn: true,
     ready: (page) => page.getByRole("button", { name: "Choose theme" }),
+    maximumGlNodeRequests: 1
+  },
+  {
+    name: "standard reports",
+    path: "/reports",
+    signedIn: true,
+    ready: (page) => page.getByRole("heading", { name: "Standard Reports" }),
+    maximumGlNodeRequests: 0
+  },
+  {
+    name: "the trial balance",
+    path: "/reports/trial-balance",
+    signedIn: true,
+    largeBooks: true,
+    ready: (page) => page.getByRole("cell", { name: "Total", exact: true }),
     maximumGlNodeRequests: 1
   }
 ];
@@ -69,7 +87,7 @@ test.beforeAll(async () => {
 
 for (const screen of SCREENS) {
   test(`${screen.name} stays within its budgets`, async ({ page }, testInfo) => {
-    if (screen.signedIn) await seedCompanies(page, [company]);
+    if (screen.signedIn) await seedCompanies(page, [screen.largeBooks ? seededCompany("large") : company]);
     await observePaint(page);
 
     const node = runningGlNode();

@@ -1,7 +1,9 @@
 # Parity: reports
 
 Status: checklist written 2026-11-24, report totals ruled on 2026-11-27
-(gl-node session); nothing built.
+(gl-node session). Built: Standard Reports, the shared frame and the Trial
+Balance (2026-11-27). To build: Balance Sheet, Profit and Loss, periods,
+columns, compare, drill-down.
 
 Old app: `src/app/(app)/reports/*`, `src/components/reports/reports-page.tsx`
 (Profit and Loss, Balance Sheet), `trial-balance-page.tsx`,
@@ -19,69 +21,97 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 
 ## Standard Reports (`/reports`)
 
-- [ ] Title *Standard Reports* (24px semibold), page padding 20px
-- [ ] A plain list (max width 576px, row dividers), each row the report's
+- [x] Title *Standard Reports* (24px semibold), page padding 20px
+- [x] A plain list (max width 576px, row dividers), each row the report's
       name and a small trailing icon, link colour on hover
 - [ ] Rows: Profit and Loss (`BarChart2`), Balance Sheet (`Scale`), Trial
       Balance (`ListChecks`)
 - [ ] P&L Detail, By Payee, A/R & A/P Aging: **waiting:** 011 unit 7
       (hidden until then)
+- [x] *Reports* on the side rail (`BookOpen`, as the old app), active on
+      every `/reports` page
+- [x] QuickBooks' Standard reports page (collapsible groups, favourite
+      stars, a search box, the Custom and Management reports sub-menu):
+      **left out** while there are three reports; the old plain list stays
 
 ## Shared report frame
 
-- [ ] Breadcrumb *‹ Standard Reports* (link)
-- [ ] Tab row of the backed reports; the current one underlined; tabs keep
+- [x] Breadcrumb *‹ Standard Reports* (link)
+- [x] Tab row of the backed reports; the current one underlined; tabs keep
       the period in their link
-- [ ] Page title, then the filter row (`header-filters`)
-- [ ] Report card: max 840px, centred, hairline border, *Print* button
-      (secondary, small, hidden when printing) calling the browser's print
-- [ ] Card heading: the active company's label (28px) **changed:** the old
-      one shows a placeholder, *John Doe* (plan question 3, answered); then
-      the report's name, then its date line
-- [ ] Sections are collapsible rows (chevron, Enter and Space toggle);
+- [x] Page title, then the filter row (`header-filters`)
+- [x] Report card: max 840px, centred, hairline border; a toolbar row at
+      its top (QuickBooks): *Expand all* / *Collapse all* on the left, the
+      *Print* button (secondary, small) on the right, both hidden when
+      printing. QuickBooks' Compact / Normal view, refresh, email, export
+      and more menu: **left out** (the old app has none of them; email and
+      export need gl-node)
+- [x] Card heading, QuickBooks' order: the report's name, then the active
+      company's label, then the date line. **changed:** the old app put the
+      label first and showed a placeholder, *John Doe* (plan question 3,
+      answered). The label is the ledger name until `me` ships
+- [x] Column header row: *Account*, then the value columns (QuickBooks;
+      the old app left the first header blank)
+- [x] Sections are collapsible rows (chevron, Enter and Space toggle);
       accounts nest by their `:` segments with per-level indent; a parent
       with children collapses its subtree
-- [ ] A row from gl-node is one account's own postings: a parent's row
+- [x] A parent, as QuickBooks shows it: a heading row (its own amount on
+      it, if it has a row from gl-node), its children, then *Total for
+      <parent>*. Collapsed, a section or parent shows its total on its own
+      heading row and no total row (QuickBooks; the old app showed parents
+      with their own amount only and no subtotal)
+- [x] Footer under the table: *Accrual basis* | the date and time the
+      answer arrived (QuickBooks). *Add note*: **left out** (needs storage)
+- [x] A row from gl-node is one account's own postings: a parent's row
       doesn't include its children, and an account with no postings in the
       range has no row. A parent's subtotal is its own row (if any) plus
       every row under it; a parent with no row (an account without postings,
       or a path segment that is no account) is a heading the UI draws, shown
       only when a row sits under it
-- [ ] Totals and subtotals are exact sums (`big.js`) of the rows of one
+- [x] Totals and subtotals are exact sums (`big.js`) of the rows of one
       answer, per currency, in stored signs (Assets and Expenses positive;
       Income, Liabilities, Equity negative); the sign is flipped for display
       only, after adding up (`docs/plan.md`, *Report totals*)
 - [ ] Amounts as `$1,234.56`; rows with zero left out
-- [ ] Filters live in the URL (`router.replace`), so a report can be
-      shared and reloaded
+- [x] Filters live in the URL, so a report can be shared and reloaded.
+      **changed:** the address changes through `history.replaceState`
+      (which `useSearchParams` follows), not `router.replace`: in the
+      static export a search-only `router.replace` never commits
 - [ ] Loading: the card with its heading and skeleton rows; an error: the
       message in the card; an empty ledger: the sections with no rows and
       zero totals, as the old app shows
-- [ ] **changed:** amounts are exact decimals from gl-node; a report
+- [x] **changed:** amounts are exact decimals from gl-node; a report
       gl-node marks `exact: false` shows its rows with no totals the UI
       would add up (gl-node's own `totalDebit`, `totalCredit` and `net`
       still show), and a note that figures were rounded once
 - [ ] **changed:** more than one currency: each figure is shown with its
       own currency; totals per currency, never converted (the old app was
       USD only)
-- [ ] Every total comes from one answer; figures from two requests are
+- [x] Every total comes from one answer; figures from two requests are
       never mixed (each column of a columnar report is its own answer)
 
 ## Trial Balance (`/reports/trial-balance`)
 
-- [ ] *As of* date field, default today, in the URL as `?asOf=`
-- [ ] Date line *As of YYYY-MM-DD*
-- [ ] Columns: blank, *Debit*, *Credit*
-- [ ] Sections Assets, Liabilities, Equity, Income, Expenses, each with
+- [x] *As of* date field, default today, in the URL as `?asOf=`
+- [x] Date line *As of YYYY-MM-DD*
+- [x] Columns: *Account*, *Debit*, *Credit*
+- [x] Sections Assets, Liabilities, Equity, Income, Expenses, each with
       *Total for <section>* in both columns; a section with no rows is left
       out
-- [ ] Bottom *Total* row (debit and credit totals from gl-node)
-- [ ] Red notice when debits and credits differ: *Debits ($x) and credits
-      ($y) don't match — check for unposted or unbalanced entries.*
-- [ ] Rows from `trialBalance(at)`; section from the account's root
+- [x] Bottom *Total* row (debit and credit totals from gl-node)
+- [x] **changed:** amounts without a currency sign. gl-node's trial
+      balance adds every currency of an account into one figure with no
+      currency named, so the UI can't say which it is (the old app showed
+      `$`). Per-currency rows: **waiting:** `docs/api-gaps.md` item 11
+- [x] The red notice when debits and credits differ: **left out.**
+      Beancount refuses an unbalanced transaction, so in one currency the
+      totals always match; with several, the figures differ by design (the
+      gl-node session's ruling on the balance sheet's warning, 2026-11-27)
+- [x] An account with debit 0 shows `0.00` in that column, as the old app
+- [x] Rows from `trialBalance(at)`; section from the account's root
       (**waiting:** account categories only for finer grouping, which the
       old trial balance doesn't use)
-- [ ] Clicking an amount: **left out** (the old trial balance's drill does
+- [x] Clicking an amount: **left out** (the old trial balance's drill does
       nothing)
 
 ## Balance Sheet (`/reports/balance-sheet`)
@@ -181,6 +211,16 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 
 ## Proof
 
+- [x] Trial Balance (2026-11-27). bun test: the account tree, parent rows
+      and headings, exact sums per currency, formatting, dates. Playwright
+      on the small seeded company (`tests/e2e/app/reports.spec.ts`): rows,
+      section and parent totals; the sections add up to gl-node's
+      `totalDebit` and `totalCredit`; the date in the URL survives a
+      reload; collapsing; a refused key; print hides the controls. Budgets
+      on the large one (10,000 entries): content in 445 ms, LCP 296 ms, CLS
+      0, one request to gl-node; 229.4 KB first-load JavaScript. The
+      `exact: false` screen is unit-tested only: gl-node rounds only with
+      amounts at widely different scales, which the seeded books don't have
 - [ ] bun test: period presets (week starting Monday, quarter edges, leap
       years), compare ranges, columnar periods and the 60 cap, the account
       tree and parent rows, decimal sums, URL round trip

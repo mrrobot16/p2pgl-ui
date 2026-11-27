@@ -75,13 +75,16 @@ function errorMessage(error: GraphqlErrorPayload): string {
  * Sends one generated GraphQL operation to gl-node with plain `fetch`.
  * Resolves with the operation's typed `data`; rejects with a `GlNodeError`.
  * A response carrying errors is a failure even when it also carries data:
- * no screen shows half an answer.
+ * no screen shows half an answer. `signal` cancels the request (a screen
+ * left, a filter changed); a cancelled request rejects with the signal's
+ * reason, never a `GlNodeError`.
  */
 export async function requestGraphql<Result, Variables>(
   endpoint: GlNodeEndpoint,
   document: DocumentTypeDecoration<Result, Variables> & { toString(): string },
   variables?: Variables,
-  fetchImplementation: typeof fetch = fetch
+  fetchImplementation: typeof fetch = fetch,
+  signal?: AbortSignal
 ): Promise<Result> {
   let response: Response;
   try {
@@ -92,9 +95,11 @@ export async function requestGraphql<Result, Variables>(
         Accept: "application/json",
         "X-Api-Key": endpoint.apiKey
       },
-      body: JSON.stringify({ query: document.toString(), variables: variables ?? {} })
+      body: JSON.stringify({ query: document.toString(), variables: variables ?? {} }),
+      signal
     });
   } catch (cause) {
+    if (signal?.aborted) throw signal.reason;
     throw new GlNodeError("unreachable", "The node could not be reached.", { cause });
   }
 

@@ -147,7 +147,9 @@ decisions behind it are in openledger-v2's
   starts from `GL_NODE_BINARY` (default
   `../openledger-v2/target/release/gl-node`; this repo never builds it) with
   a temporary data folder, a generated operator key, P2P off, and CORS open
-  to http://localhost:3000. `kit`: the development-only UI kit page
+  to http://localhost:3000. It also seeds two companies through their
+  `.bean` before the tests start (`tests/e2e/seeded-books.ts`):
+  `seeded-small` with known figures and `seeded-large` for the budgets. `kit`: the development-only UI kit page
   (`/dev/ui-kit`, every component in every theme) under `next dev` on port
   3101, for shell parts no built screen shows yet. Stop any dev server on
   3000 or 3101 first.

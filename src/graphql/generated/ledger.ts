@@ -25,6 +25,13 @@ export type LedgerHealthQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type LedgerHealthQuery = { health: { status: string, version: string } };
 
+export type TrialBalanceQueryVariables = Exact<{
+  at: string;
+}>;
+
+
+export type TrialBalanceQuery = { trialBalance: { at: string, totalDebit: string, totalCredit: string, exact: boolean, rows: Array<{ account: string, debit: string, credit: string }> } };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -62,3 +69,18 @@ export const LedgerHealthDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<LedgerHealthQuery, LedgerHealthQueryVariables>;
+export const TrialBalanceDocument = new TypedDocumentString(`
+    query TrialBalance($at: Date!) {
+  trialBalance(at: $at) {
+    at
+    totalDebit
+    totalCredit
+    exact
+    rows {
+      account
+      debit
+      credit
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<TrialBalanceQuery, TrialBalanceQueryVariables>;
