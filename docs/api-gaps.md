@@ -111,5 +111,18 @@ Not in 011's plan yet:
    UI keeps to one request per screen, caches answers, and never fetches
    per keystroke (the performance skill).
 
+10. **Fiscal year start, and Retained Earnings split from Net Income.**
+    QuickBooks' Balance Sheet shows *Retained Earnings* (income before this
+    fiscal year) and *Net Income* (this fiscal year). `balanceSheet` puts
+    every year's income into one `Equity:Net-Income` row, and the node
+    keeps no fiscal year start. *Blocked (gl-node session, 2026-11-27):*
+    the fiscal year start is a fact about the company, so a record in the
+    books set by an admin (like the label), and the split belongs on
+    `balanceSheet` itself: made in the UI it would take two requests whose
+    answers could come from different states of the books. Wanted: a
+    fiscal year start, and `balanceSheet` returning the two figures. Until
+    then the Balance Sheet shows one *Net Income* row, marked as a change
+    from QuickBooks.
+
 Until an item lands, its part of the UI stays out (no stubs) or uses the
 slower fallback named above (openledger-v2 session, 2026-11-24).

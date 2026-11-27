@@ -1,6 +1,7 @@
 # Parity: reports
 
-Status: checklist written 2026-11-24; nothing built.
+Status: checklist written 2026-11-24, report totals ruled on 2026-11-27
+(gl-node session); nothing built.
 
 Old app: `src/app/(app)/reports/*`, `src/components/reports/reports-page.tsx`
 (Profit and Loss, Balance Sheet), `trial-balance-page.tsx`,
@@ -40,20 +41,31 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 - [ ] Sections are collapsible rows (chevron, Enter and Space toggle);
       accounts nest by their `:` segments with per-level indent; a parent
       with children collapses its subtree
-- [ ] A real parent account with no balance of its own gets a row only when
-      a child has one; a path segment that is not an account is a row with
-      the children's sum
+- [ ] A row from gl-node is one account's own postings: a parent's row
+      doesn't include its children, and an account with no postings in the
+      range has no row. A parent's subtotal is its own row (if any) plus
+      every row under it; a parent with no row (an account without postings,
+      or a path segment that is no account) is a heading the UI draws, shown
+      only when a row sits under it
+- [ ] Totals and subtotals are exact sums (`big.js`) of the rows of one
+      answer, per currency, in stored signs (Assets and Expenses positive;
+      Income, Liabilities, Equity negative); the sign is flipped for display
+      only, after adding up (`docs/plan.md`, *Report totals*)
 - [ ] Amounts as `$1,234.56`; rows with zero left out
 - [ ] Filters live in the URL (`router.replace`), so a report can be
       shared and reloaded
 - [ ] Loading: the card with its heading and skeleton rows; an error: the
       message in the card; an empty ledger: the sections with no rows and
       zero totals, as the old app shows
-- [ ] **changed:** amounts are exact decimals from gl-node; a report or
-      figure gl-node marks `exact: false` shows a note that it was rounded
-      once
+- [ ] **changed:** amounts are exact decimals from gl-node; a report
+      gl-node marks `exact: false` shows its rows with no totals the UI
+      would add up (gl-node's own `totalDebit`, `totalCredit` and `net`
+      still show), and a note that figures were rounded once
 - [ ] **changed:** more than one currency: each figure is shown with its
-      own currency; totals per currency (the old app was USD only)
+      own currency; totals per currency, never converted (the old app was
+      USD only)
+- [ ] Every total comes from one answer; figures from two requests are
+      never mixed (each column of a columnar report is its own answer)
 
 ## Trial Balance (`/reports/trial-balance`)
 
@@ -87,11 +99,18 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 - [ ] *Liabilities and Equity* section with nested *Liabilities* (total)
       and *Equity* (rows, *Net Income* row, *Total for Equity*), then
       *Total for Liabilities and Equity*
+- [ ] No "out of balance" warning from assets + liabilities + equity: with
+      a transaction that changes currency, the per-currency sums are
+      uneven by design (gl-node session, 2026-11-27)
 - [ ] Net Income: **changed:** gl-node puts the books' whole net income in
       equity as `Equity:Net-Income`; the old app showed net income from the
       period's *From* date to *To*. Shown as the *Net Income* row (not as an
       account row), with gl-node's figure, so the sheet balances to the
       cent
+- [ ] *Retained Earnings* (income before this fiscal year) split from *Net
+      Income* (this fiscal year), as QuickBooks shows: **waiting:** a fiscal
+      year start and the split on `balanceSheet` (`docs/api-gaps.md` item
+      10); until then the one *Net Income* row above
 - [ ] Drill-down from an amount (below)
 
 ## Profit and Loss (`/reports/profit-loss`)
@@ -105,6 +124,11 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 - [ ] *Income* section (rows, *Total for Income*), *Gross Profit* row,
       *Expenses* section (rows, *Total for Expenses*), *Net Operating
       Income*, *Net Income*
+- [ ] *Net Income* is gl-node's `net`, never a sum the UI made. As in the
+      old app (no Cost of Goods Sold or Other Income categories yet),
+      *Gross Profit* is *Total for Income* and *Net Operating Income* is
+      `net`; Cost of Goods Sold and Other Income/Expense sections:
+      **waiting:** account categories (011 unit 3)
 - [ ] From `incomeStatement(from, to)`; *All dates* asks for the ledger's
       first to last date
 - [ ] Drill-down from an amount (below)
@@ -163,3 +187,8 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 - [ ] Playwright against a seeded gl-node: each report's totals equal
       gl-node's for the same dates; filters in the URL survive a reload;
       drill-down lists the entries; print hides the controls
+- [ ] The totals the UI adds up, on a seeded single-currency ledger: Total
+      Income − Total Expenses (display signs) equals `net`; assets +
+      liabilities + equity (stored signs) is 0; the trial balance's sums
+      match `totalDebit` and `totalCredit`; an `exact: false` answer shows
+      no added-up totals

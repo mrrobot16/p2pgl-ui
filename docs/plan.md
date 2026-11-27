@@ -47,6 +47,31 @@ never edits openledger-v2.
   never turned into JavaScript numbers. Sums the screen makes itself (parent
   account rollups, section subtotals) use a decimal library, and formatting
   works on the string.
+- **Report totals are added up from one answer** (gl-node session,
+  2026-11-27, checked in `crates/ledger/src/read_model.rs`). The node gives
+  `totalDebit` and `totalCredit` on the trial balance and `net` on the
+  income statement; every other total (Total for Assets, Liabilities,
+  Equity, Liabilities and Equity, Income, Expenses, and parent accounts) is
+  the UI's exact sum of rows, under these rules:
+  - A row is one account's own postings only: a parent's row doesn't
+    include its children, and an account with no postings in the range has
+    no row. A parent's subtotal is its own row (if any) plus every row
+    under it; a parent with no row is a heading the UI draws.
+  - Rows carry their stored sign: Assets and Expenses positive; Income,
+    Liabilities and Equity (`Equity:Net-Income` included) negative. Add up
+    first, then flip the sign for display only.
+  - `net` is −(sum of income + sum of expenses). Net Income on screen is
+    always the node's `net`, never a sum the UI made.
+  - Each currency is added up on its own, with no conversion. A
+    transaction that changes currency (a price or cost) leaves the
+    per-currency sums uneven, so no "out of balance" warning is ever built
+    from assets + liabilities + equity.
+  - When an answer says `exact: false`, its rows show without any totals:
+    a rounded row is the exact figure rounded once, so a sum of rows could
+    be off.
+  - Every total comes from a single answer; figures from two requests are
+    never mixed, since the books may change between them. A report column
+    is one answer, so its totals come from that column's report.
 - **Accounts get their categories later.** The old screens group accounts by
   13 QuickBooks-style categories. gl-node will carry them as account
   metadata (011 unit 3). Until then, an account's section comes from its
@@ -272,7 +297,11 @@ The frontend rules are the `performance` skill. Two of them are built in
   temporary data folder, `cors.allowedOrigins: ["http://localhost:3000"]`
   and a generated operator key. Each flow creates its own company through
   the UI or the node endpoint. Totals on screen are checked against what
-  gl-node returns for the same query.
+  gl-node returns for the same query. For report totals the UI adds up, a
+  seeded single-currency ledger checks that Total Income − Total Expenses
+  (display signs) equals `net`, that assets + liabilities + equity (stored
+  signs) is 0, and that the trial balance's sums match `totalDebit` and
+  `totalCredit`.
 - **Seeding books goes through the `.bean`, never the API** (openledger-v2
   session, 2026-11-25). The API allows at most 7 `appendTransaction` a
   request and 60 requests a minute, so 10,000 entries would take about 24

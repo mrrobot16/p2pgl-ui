@@ -76,7 +76,10 @@ decisions behind it are in openledger-v2's
   decision* for anything that changes existing rows. Choosing among the
   rows the node returns, or calling an endpoint several times, is fine;
   computing what the node should compute (balances, totals across pages)
-  or showing something missing as if it were finished is not.
+  or showing something missing as if it were finished is not. A report's
+  section and parent-account totals are exact sums of the rows of one
+  answer, per currency, and only when it says `exact: true` (the rules are
+  in `docs/plan.md`, *Report totals*).
 - **The GraphQL client is generated** from the two schema files; plain
   `fetch`, no Apollo or urql.
 
