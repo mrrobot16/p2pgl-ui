@@ -12,6 +12,13 @@ export type AccessRole =
   /** Read, and enter transactions and manage accounts. */
   | 'WRITE';
 
+export type BalanceSheetQueryVariables = Exact<{
+  at: string;
+}>;
+
+
+export type BalanceSheetQuery = { balanceSheet: { at: string, exact: boolean, assets: Array<{ account: string, balances: Array<{ number: string, currency: string }> }>, liabilities: Array<{ account: string, balances: Array<{ number: string, currency: string }> }>, equity: Array<{ account: string, balances: Array<{ number: string, currency: string }> }> } };
+
 export type GrantAccessMutationVariables = Exact<{
   name: string;
   role: AccessRole;
@@ -51,6 +58,35 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
+export const BalanceSheetDocument = new TypedDocumentString(`
+    query BalanceSheet($at: Date!) {
+  balanceSheet(at: $at) {
+    at
+    exact
+    assets {
+      account
+      balances {
+        number
+        currency
+      }
+    }
+    liabilities {
+      account
+      balances {
+        number
+        currency
+      }
+    }
+    equity {
+      account
+      balances {
+        number
+        currency
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<BalanceSheetQuery, BalanceSheetQueryVariables>;
 export const GrantAccessDocument = new TypedDocumentString(`
     mutation GrantAccess($name: String!, $role: AccessRole!) {
   grantAccess(name: $name, role: $role) {

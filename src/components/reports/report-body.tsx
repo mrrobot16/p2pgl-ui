@@ -11,8 +11,8 @@ type ReportBodyProperties = {
   columnCount: number;
   answer: LedgerQueryState<unknown>;
   nodeUrl: string;
-  /** gl-node marked the answer inexact, so the totals the screen adds up are left out. */
-  roundedNote: boolean;
+  /** Said when gl-node marked the answer inexact (the totals the screen adds up are left out); null otherwise. */
+  roundedNote: string | null;
   /** The report itself, once an answer is in. */
   children: ReactNode;
 };
@@ -56,7 +56,7 @@ export function ReportBody({ columnCount, answer, nodeUrl, roundedNote, children
     <>
       {roundedNote ? (
         <p role="note" className="mb-4 rounded border border-[var(--color-divider-tertiary)] bg-[var(--color-container-background-secondary)] px-3 py-2 text-xs text-[var(--color-text-primary)]">
-          The node rounded some figures once, so the section totals are left out: adding rounded figures up could be off. The bottom totals are the node&apos;s own.
+          {roundedNote}
         </p>
       ) : null}
       {children}

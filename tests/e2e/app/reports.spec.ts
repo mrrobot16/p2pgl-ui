@@ -4,7 +4,7 @@ import Big from "big.js";
 import { seedCompanies, type TestCompany } from "@tests/e2e/companies";
 import { seededCompany } from "@tests/e2e/seeded-books";
 
-// The Trial Balance against the small seeded company (its figures are in
+// The reports against the small seeded company (its figures are in
 // tests/e2e/seeded-books.ts). Every total on screen is checked against
 // gl-node's own answer for the same date.
 
@@ -38,12 +38,13 @@ async function openTrialBalance(page: Page, query = ""): Promise<Locator> {
   return table;
 }
 
-test("the rail's Reports goes to Standard Reports, which lists the Trial Balance", async ({ page }) => {
+test("the rail's Reports goes to Standard Reports, which lists the built reports", async ({ page }) => {
   await seedCompanies(page, [seededCompany("small")]);
   await page.goto("/");
   await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Reports" }).click();
   await expect(page).toHaveURL(/\/reports$/);
   await expect(page.getByRole("heading", { name: "Standard Reports" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link")).toHaveText(["Balance Sheet", "Trial Balance"]);
   await page.getByRole("link", { name: "Trial Balance" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Trial Balance" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Reports" })).toHaveAttribute("aria-current", "page");
@@ -138,4 +139,75 @@ test("printing shows the statement without the controls", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Collapse all" })).toBeHidden();
   await expect(page.getByLabel("As of")).toBeHidden();
   await expect(page.getByRole("table")).toBeVisible();
+});
+
+// The Balance Sheet against the small seeded company. As of today its Net
+// Income is 550.50 − 540.25 = 10.25; the 2099 entry turns it to −9.50.
+
+async function openBalanceSheet(page: Page, query = ""): Promise<Locator> {
+  await seedCompanies(page, [seededCompany("small")]);
+  await page.goto(`/reports/balance-sheet${query}`);
+  const table = page.getByRole("table");
+  await expect(table.getByRole("cell", { name: "Total for Liabilities and Equity" })).toBeVisible();
+  return table;
+}
+
+test("the balance sheet: assets, then liabilities and equity with Net Income, shown positive", async ({ page }) => {
+  const table = await openBalanceSheet(page);
+  await expect(page.getByRole("region", { name: "Balance Sheet" }).getByText(/^As of /)).toHaveText(/^As of [A-Z][a-z]+ \d{1,2}, \d{4}$/);
+  expect(await table.getByRole("columnheader").allInnerTexts()).toEqual(["Account", "Total"]);
+  expect(await rowCells(table, "Bank")).toEqual(["Bank", "$250.50"]);
+  expect(await rowCells(table, "Checking")).toEqual(["Checking", "$800.00"]);
+  expect(await rowCells(table, "Total for Assets")).toEqual(["Total for Assets", "$1,050.50"]);
+  expect(await rowCells(table, "Card")).toEqual(["Card", "$40.25"]);
+  expect(await rowCells(table, "Total for Liabilities")).toEqual(["Total for Liabilities", "$40.25"]);
+  expect(await rowCells(table, "Opening-Balances")).toEqual(["Opening-Balances", "$1,000.00"]);
+  expect(await rowCells(table, "Net Income")).toEqual(["Net Income", "$10.25"]);
+  expect(await rowCells(table, "Total for Equity")).toEqual(["Total for Equity", "$1,010.25"]);
+  expect(await rowCells(table, "Total for Liabilities and Equity")).toEqual(["Total for Liabilities and Equity", "$1,050.50"]);
+  await expect(table.getByRole("cell", { name: "Net-Income" })).toHaveCount(0);
+});
+
+test("the balance sheet balances: assets equal liabilities and equity, as gl-node's rows add up", async ({ page }) => {
+  const table = await openBalanceSheet(page, "?reportPeriod=all_dates");
+  await expect(page.getByRole("region", { name: "Balance Sheet" }).getByText("All dates", { exact: true })).toBeVisible();
+  expect(await rowCells(table, "Net Income")).toEqual(["Net Income", "-$9.50"]);
+  expect(await rowCells(table, "Total for Liabilities")).toEqual(["Total for Liabilities", "$60.00"]);
+  const [, assets] = await rowCells(table, "Total for Assets");
+  const [, liabilitiesAndEquity] = await rowCells(table, "Total for Liabilities and Equity");
+  expect(assets).toBe("$1,050.50");
+  expect(liabilitiesAndEquity).toBe(assets);
+});
+
+test("the balance sheet's period: a preset, an edited date making it Custom, both kept in the address", async ({ page }) => {
+  const table = await openBalanceSheet(page);
+  const region = page.getByRole("region", { name: "Balance Sheet" });
+  await page.getByLabel("Report period").selectOption("all_dates");
+  await expect(page).toHaveURL(/reportPeriod=all_dates/);
+  await expect(page.getByLabel("To", { exact: true })).toHaveValue("");
+  await expect.poll(() => rowCells(table, "Net Income")).toEqual(["Net Income", "-$9.50"]);
+
+  await page.getByLabel("To", { exact: true }).fill("2026-02-28");
+  await expect(page).toHaveURL(/reportPeriod=custom/);
+  await expect(page).toHaveURL(/to=2026-02-28/);
+  await expect(page.getByLabel("Report period")).toHaveValue("custom");
+  await expect(region.getByText("As of February 28, 2026", { exact: true })).toBeVisible();
+  await expect.poll(() => rowCells(table, "Total for Assets")).toEqual(["Total for Assets", "$1,250.50"]);
+  expect(await rowCells(table, "Net Income")).toEqual(["Net Income", "$210.25"]);
+
+  await page.reload();
+  await expect(page.getByLabel("To", { exact: true })).toHaveValue("2026-02-28");
+  await expect(region.getByText("As of February 28, 2026", { exact: true })).toBeVisible();
+  // The Trial Balance tab doesn't take a period.
+  await expect(page.getByRole("navigation", { name: "Reports" }).getByRole("link", { name: "Trial Balance" })).toHaveAttribute("href", "/reports/trial-balance");
+});
+
+test("collapsing Liabilities and Equity shows its total on its heading", async ({ page }) => {
+  const table = await openBalanceSheet(page);
+  await table.getByRole("button", { name: "Liabilities and Equity" }).click();
+  expect(await rowCells(table, "Liabilities and Equity")).toEqual(["Liabilities and Equity", "$1,050.50"]);
+  await expect(table.getByRole("button", { name: "Equity", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Expand all" }).click();
+  await table.getByRole("button", { name: "Equity", exact: true }).click();
+  expect(await rowCells(table, "Equity")).toEqual(["Equity", "$1,010.25"]);
 });

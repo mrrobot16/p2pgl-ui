@@ -2,8 +2,8 @@
 
 Status: checklist written 2026-11-24, report totals ruled on 2026-11-27
 (gl-node session). Built: Standard Reports, the shared frame and the Trial
-Balance (2026-11-27). To build: Balance Sheet, Profit and Loss, periods,
-columns, compare, drill-down.
+Balance (2026-11-27), the Balance Sheet with its period (2026-11-27). To
+build: Profit and Loss, columns, compare, drill-down.
 
 Old app: `src/app/(app)/reports/*`, `src/components/reports/reports-page.tsx`
 (Profit and Loss, Balance Sheet), `trial-balance-page.tsx`,
@@ -72,21 +72,23 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
       answer, per currency, in stored signs (Assets and Expenses positive;
       Income, Liabilities, Equity negative); the sign is flipped for display
       only, after adding up (`docs/plan.md`, *Report totals*)
-- [ ] Amounts as `$1,234.56`; rows with zero left out
+- [x] Amounts as `$1,234.56`; rows with zero left out
 - [x] Filters live in the URL, so a report can be shared and reloaded.
       **changed:** the address changes through `history.replaceState`
       (which `useSearchParams` follows), not `router.replace`: in the
       static export a search-only `router.replace` never commits
-- [ ] Loading: the card with its heading and skeleton rows; an error: the
-      message in the card; an empty ledger: the sections with no rows and
-      zero totals, as the old app shows
+- [x] Loading: the card with its heading and skeleton rows; an error: the
+      message in the card, with *Try again*; an empty ledger: the sections
+      with no rows and zero totals, as the old app shows (`0.00` with no
+      currency sign: empty books name no currency). The Trial Balance
+      leaves out a section with no rows, as the old one did
 - [x] **changed:** amounts are exact decimals from gl-node; a report
       gl-node marks `exact: false` shows its rows with no totals the UI
       would add up (gl-node's own `totalDebit`, `totalCredit` and `net`
       still show), and a note that figures were rounded once
-- [ ] **changed:** more than one currency: each figure is shown with its
-      own currency; totals per currency, never converted (the old app was
-      USD only)
+- [x] **changed:** more than one currency: each figure is shown with its
+      own currency, one line each; totals per currency, never converted
+      (the old app was USD only)
 - [x] Every total comes from one answer; figures from two requests are
       never mixed (each column of a columnar report is its own answer)
 
@@ -116,23 +118,27 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 
 ## Balance Sheet (`/reports/balance-sheet`)
 
-- [ ] Filters: *Report period* (presets below), *From*, *To*, *Display
-      columns by*, *Compare to*; editing a date switches the period to
-      Custom
-- [ ] Date line *As of <Month D, YYYY>*
-- [ ] Assets section: rows from `balanceSheet(to).assets`, *Total for
+- [x] Filters: *Report period* (presets below), *From*, *To*; editing a
+      date switches the period to Custom. The balance sheet is as of *To*
+      (*From* matters for drill-down); with no *To*, as of everything in
+      the books (`balanceSheet(at: "9999-12-31")`), and the date line says
+      *All dates*
+- [ ] *Display columns by*, *Compare to*: built after the Profit and Loss
+      (shared by both; below)
+- [x] Date line *As of <Month D, YYYY>*
+- [x] Assets section: rows from `balanceSheet(to).assets`, *Total for
       Assets*
 - [ ] Inside Assets, *Current Assets* › *Bank Accounts* with its total,
       other current assets, *Total for Current Assets*, then *Fixed Assets*
       with its total: **waiting:** account categories (011 unit 3); until
       then every asset is one list under Assets
-- [ ] *Liabilities and Equity* section with nested *Liabilities* (total)
+- [x] *Liabilities and Equity* section with nested *Liabilities* (total)
       and *Equity* (rows, *Net Income* row, *Total for Equity*), then
       *Total for Liabilities and Equity*
-- [ ] No "out of balance" warning from assets + liabilities + equity: with
+- [x] No "out of balance" warning from assets + liabilities + equity: with
       a transaction that changes currency, the per-currency sums are
       uneven by design (gl-node session, 2026-11-27)
-- [ ] Net Income: **changed:** gl-node puts the books' whole net income in
+- [x] Net Income: **changed:** gl-node puts the books' whole net income in
       equity as `Equity:Net-Income`; the old app showed net income from the
       period's *From* date to *To*. Shown as the *Net Income* row (not as an
       account row), with gl-node's figure, so the sheet balances to the
@@ -165,12 +171,16 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
 
 ## Report period presets (P&L and Balance Sheet)
 
-- [ ] This year to date (default), All dates, Today, Yesterday, This week
+- [x] This year to date (default), All dates, Today, Yesterday, This week
       (from Monday), This month, This quarter, This year, Last week, Last
       month, Last quarter, Last year, Custom
-- [ ] URL: `reportPeriod`, `from` and `to` only for Custom,
-      `displayColumnsBy`, `compareTo`; defaults left out of the URL;
-      unknown values fall back to the default
+- [x] URL: `reportPeriod`, `from` and `to` only for Custom (either may be
+      missing: open at that end); defaults left out of the URL; unknown
+      values fall back to the default. `displayColumnsBy` and `compareTo`
+      come with those filters
+- [x] Tabs carry the period only between reports that take one (Balance
+      Sheet, Profit and Loss); the Trial Balance's tab carries no period,
+      and its *As of* date stays its own
 
 ## Display columns by
 
@@ -221,6 +231,16 @@ Marks: `[ ]` to build, `[x]` built and checked, **waiting:** a gl-node API,
       0, one request to gl-node; 229.4 KB first-load JavaScript. The
       `exact: false` screen is unit-tested only: gl-node rounds only with
       amounts at widely different scales, which the seeded books don't have
+- [x] Balance Sheet (2026-11-27). bun test: period presets (weeks from
+      Monday, quarter and year edges, leap years), the period in the URL
+      and back, Net Income out of the accounts, assets + liabilities +
+      equity = 0 in stored signs. Playwright on the small company: every
+      section, Net Income shown positive (and negative, `-$9.50`, with the
+      2099 entry), Total for Liabilities and Equity equal to Total for
+      Assets, a preset and an edited date (Custom) in the URL surviving a
+      reload, collapsing the group. Budgets on the large one: content in
+      262 ms, LCP 196 ms, CLS 0, one request; 233.5 KB first-load
+      JavaScript
 - [ ] bun test: period presets (week starting Monday, quarter edges, leap
       years), compare ranges, columnar periods and the 60 cap, the account
       tree and parent rows, decimal sums, URL round trip

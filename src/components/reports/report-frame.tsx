@@ -8,7 +8,7 @@ import { BUILT_REPORTS, type ReportIdentifier } from "@/lib/reports/report-list"
 type ReportFrameProperties = {
   report: ReportIdentifier;
   title: string;
-  /** The filters' query string (`asOf=2026-11-27`), kept by the tabs; empty for the defaults. */
+  /** The filters' query string (`asOf=2026-11-27`), kept by the tabs to reports of the same kind; empty for the defaults. */
   query: string;
   filters: ReactNode;
   companyLabel: string;
@@ -42,10 +42,11 @@ export function ReportFrame({ report, title, query, filters, companyLabel, dateL
         <nav aria-label="Reports" className="mb-6 flex w-full items-center gap-1 border-b border-[var(--color-divider-tertiary)]">
           {BUILT_REPORTS.map((item) => {
             const current = item.identifier === report;
+            const sameFilters = item.filters === BUILT_REPORTS.find((built) => built.identifier === report)?.filters;
             return (
               <Link
                 key={item.identifier}
-                href={query === "" ? item.href : `${item.href}?${query}`}
+                href={query === "" || !sameFilters ? item.href : `${item.href}?${query}`}
                 aria-current={current ? "page" : undefined}
                 className={`-mb-px border-b-2 px-3 py-1.5 text-xs font-medium transition-colors ${
                   current

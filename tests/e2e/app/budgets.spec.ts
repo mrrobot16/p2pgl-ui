@@ -52,6 +52,14 @@ const SCREENS: Screen[] = [
     maximumGlNodeRequests: 0
   },
   {
+    name: "the balance sheet",
+    path: "/reports/balance-sheet",
+    signedIn: true,
+    largeBooks: true,
+    ready: (page) => page.getByRole("cell", { name: "Total for Liabilities and Equity" }),
+    maximumGlNodeRequests: 1
+  },
+  {
     name: "the trial balance",
     path: "/reports/trial-balance",
     signedIn: true,

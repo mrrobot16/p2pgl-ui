@@ -1,0 +1,29 @@
+# The Balance Sheet screen: each account's balance on a date, by section,
+# and whether every figure is exact (docs/plan.md, Report totals).
+query BalanceSheet($at: Date!) {
+  balanceSheet(at: $at) {
+    at
+    exact
+    assets {
+      account
+      balances {
+        number
+        currency
+      }
+    }
+    liabilities {
+      account
+      balances {
+        number
+        currency
+      }
+    }
+    equity {
+      account
+      balances {
+        number
+        currency
+      }
+    }
+  }
+}
